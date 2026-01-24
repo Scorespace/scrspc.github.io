@@ -3,8 +3,8 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://yourusername.github.io',
-  base: '/your-repo-name/',
+  site: 'https://Scorespace.github.io',
+  base: '/scrsite/',
   output: 'static',
   trailingSlash: 'always',
 });
