@@ -1,0 +1,218 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { jams } from '../data/jams';
+
+const totalParticipants = jams.reduce((sum, jam) => sum + jam.participants, 0);
+const totalSubmissions = jams.reduce((sum, jam) => sum + jam.submissions, 0);
+
+const jamsByYear = jams.reduce((acc, jam) => {
+  const year = new Date(jam.date).getFullYear();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(jam);
+  return acc;
+}, {} as Record<number, typeof jams>);
+
+const years = Object.keys(jamsByYear).map(Number).sort((a, b) => b - a);
+---
+
+<Layout title="Game Jams - ScoreSpace" description="Browse all ScoreSpace game jams from 2019 to present.">
+  <section class="page-header">
+    <div class="container">
+      <h1>Game Jams</h1>
+      <p class="subtitle">
+        {jams.length} jams hosted since 2019, with {totalParticipants.toLocaleString()} participants
+        and {totalSubmissions.toLocaleString()} games submitted.
+      </p>
+    </div>
+  </section>
+
+  <section class="jams-section">
+    <div class="container">
+      {years.map((year) => (
+        <div class="year-section">
+          <h2 class="year-heading">{year}</h2>
+          <div class="jams-grid">
+            {jamsByYear[year].map((jam) => {
+              const isSpeedJam = jam.name.toLowerCase().includes('speedjam') || jam.name.toLowerCase().includes('foddian');
+              return (
+              <a href={jam.url} target="_blank" rel="noopener noreferrer" class={`jam-card ${isSpeedJam ? 'speedjam' : ''}`}>
+                <div class="jam-content">
+                  <div class="jam-info">
+                    <h3>{jam.name}</h3>
+                    <div class="jam-date">
+                      {new Date(jam.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </div>
+                    <div class="jam-stats">
+                      <div class="stat">
+                        <span class="stat-value">{jam.participants.toLocaleString()}</span>
+                        <span class="stat-label">Participants</span>
+                      </div>
+                      <div class="stat">
+                        <span class="stat-value">{jam.submissions}</span>
+                        <span class="stat-label">Submissions</span>
+                      </div>
+                    </div>
+                  </div>
+                  {jam.theme && <div class="jam-theme">{jam.theme}</div>}
+                </div>
+              </a>
+            );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    padding: 4rem 0 3rem;
+    text-align: center;
+    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .jams-section {
+    padding: 2rem 0;
+  }
+
+  .year-section {
+    margin-bottom: 3rem;
+  }
+
+  .year-heading {
+    font-size: 1.75rem;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .jams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .jam-card {
+    display: block;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .jam-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    color: var(--color-text);
+  }
+
+  .jam-card.speedjam {
+    border-color: rgba(0, 255, 12, 0.3);
+  }
+
+  .jam-card.speedjam:hover {
+    border-color: #00ff0c;
+  }
+
+  .jam-card.speedjam h3 {
+    color: var(--color-text);
+  }
+
+  .jam-card.speedjam .jam-theme {
+    color: #00ff0c;
+  }
+
+  .jam-card.speedjam .stat-value {
+    color: #00ff0c;
+  }
+
+  .jam-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .jam-info {
+    flex: 1;
+  }
+
+  .jam-card h3 {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .jam-theme {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    color: #06befc;
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    text-align: center;
+    width: 120px;
+    flex-shrink: 0;
+    line-height: 1.3;
+    word-wrap: break-word;
+  }
+
+  .jam-date {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .jam-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #06befc;
+  }
+
+  .stat-label {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .jams-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

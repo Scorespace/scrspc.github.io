@@ -1,0 +1,307 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { jams } from '../data/jams';
+import { games } from '../data/games';
+
+const totalParticipants = jams.reduce((sum, jam) => sum + jam.participants, 0);
+const totalSubmissions = jams.reduce((sum, jam) => sum + jam.submissions, 0);
+const recentJams = jams.slice(0, 3);
+---
+
+<Layout title="ScoreSpace - Make games. Play games.">
+  <section class="hero">
+    <div class="container">
+      <h1>ScoreSpace</h1>
+      <p class="tagline">Make games. Play games.</p>
+      <p class="description">
+        Hosting game jams since 2019, bringing together developers from around the world
+        to create amazing games in limited time.
+      </p>
+      <div class="cta-buttons">
+        <a href={`${import.meta.env.BASE_URL}jams/`} class="btn btn-primary">View Jams</a>
+        <a href={`${import.meta.env.BASE_URL}games/`} class="btn btn-secondary">Play Games</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-number">{jams.length}</span>
+          <span class="stat-label">Game Jams</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">{totalParticipants.toLocaleString()}</span>
+          <span class="stat-label">Participants</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">{totalSubmissions.toLocaleString()}</span>
+          <span class="stat-label">Games Submitted</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number">{games.length}</span>
+          <span class="stat-label">Featured Games</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="recent-jams">
+    <div class="container">
+      <h2>Recent Jams</h2>
+      <div class="jams-grid">
+        {recentJams.map((jam) => {
+          const isSpeedJam = jam.name.toLowerCase().includes('speedjam') || jam.name.toLowerCase().includes('foddian');
+          return (
+          <a href={jam.url} target="_blank" rel="noopener noreferrer" class={`jam-card ${isSpeedJam ? 'speedjam' : ''}`}>
+            <div class="jam-content">
+              <div class="jam-info">
+                <h3>{jam.name}</h3>
+                <div class="jam-date">{new Date(jam.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                <div class="jam-stats">
+                  <div class="stat">
+                    <span class="stat-value">{jam.participants.toLocaleString()}</span>
+                    <span class="stat-label">Participants</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-value">{jam.submissions}</span>
+                    <span class="stat-label">Submissions</span>
+                  </div>
+                </div>
+              </div>
+              {jam.theme && <div class="jam-theme">{jam.theme}</div>}
+            </div>
+          </a>
+        );
+        })}
+      </div>
+      <div class="section-cta">
+        <a href={`${import.meta.env.BASE_URL}jams/`} class="btn btn-secondary">View All Jams</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding: 6rem 0 4rem;
+    text-align: center;
+    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+  }
+
+  .hero h1 {
+    font-size: 4rem;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .tagline {
+    font-size: 1.5rem;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .description {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    color: var(--color-text);
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .stats {
+    padding: 4rem 0;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .stat-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-number {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+
+  .recent-jams {
+    padding: 4rem 0;
+  }
+
+  .recent-jams h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .jams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .jam-card {
+    display: block;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .jam-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    color: var(--color-text);
+  }
+
+  .jam-card.speedjam {
+    border-color: rgba(0, 255, 12, 0.3);
+  }
+
+  .jam-card.speedjam:hover {
+    border-color: #00ff0c;
+  }
+
+  .jam-card.speedjam .jam-theme {
+    color: #00ff0c;
+  }
+
+  .jam-card.speedjam .stat-value {
+    color: #00ff0c;
+  }
+
+  .jam-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .jam-info {
+    flex: 1;
+  }
+
+  .jam-card h3 {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .jam-theme {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    color: #06befc;
+    text-transform: uppercase;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    text-align: center;
+    width: 120px;
+    flex-shrink: 0;
+    line-height: 1.3;
+    word-wrap: break-word;
+  }
+
+  .jam-date {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .jam-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #06befc;
+  }
+
+  .stat-label {
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+  }
+
+  .section-cta {
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 {
+      font-size: 2.5rem;
+    }
+
+    .tagline {
+      font-size: 1.25rem;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
+  }
+</style>

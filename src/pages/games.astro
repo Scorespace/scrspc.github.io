@@ -1,0 +1,253 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { games } from '../data/games';
+---
+
+<Layout title="Games - ScoreSpace" description="Play games created by ScoreSpace.">
+  <section class="page-header">
+    <div class="container">
+      <h1>Games</h1>
+      <p class="subtitle">
+        Games created by ScoreSpace. Play them directly in your browser or download to play offline.
+      </p>
+    </div>
+  </section>
+
+  <section class="games-section">
+    <div class="container">
+      {games.length > 0 ? (
+        <div class="games-grid">
+          {games.map((game) => (
+            <a href={game.url} target="_blank" rel="noopener noreferrer" class="game-card">
+              <div class="game-content">
+                <h2>{game.name}</h2>
+                <p class="game-description">{game.description}</p>
+                <div class="game-meta">
+                  <span class="playable-badge">
+                    {game.playable === 'browser' && 'Play in Browser'}
+                    {game.playable === 'download' && 'Download'}
+                    {game.playable === 'both' && 'Browser & Download'}
+                  </span>
+                </div>
+                {game.tags && game.tags.length > 0 && (
+                  <div class="game-tags">
+                    {game.tags.map((tag) => (
+                      <span class="tag">{tag}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div class="game-cta">
+                <span class="play-button">Play Now</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <p>No games available yet. Check back soon!</p>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="jam-games-cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Looking for more games?</h2>
+        <p>
+          Check out the thousands of games submitted to our game jams on itch.io.
+          Each jam features unique themes and creative submissions from developers worldwide.
+        </p>
+        <a href="https://itch.io/jams/hosted-by-scorespace" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          Browse Jam Submissions
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header {
+    padding: 4rem 0 3rem;
+    text-align: center;
+    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .games-section {
+    padding: 3rem 0;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .game-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .game-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
+    color: var(--color-text);
+  }
+
+  .game-content {
+    padding: 2rem;
+    flex: 1;
+  }
+
+  .game-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+  }
+
+  .game-description {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .game-meta {
+    margin-bottom: 1rem;
+  }
+
+  .playable-badge {
+    display: inline-block;
+    background-color: rgba(6, 190, 252, 0.15);
+    color: #06befc;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .game-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    background-color: rgba(6, 190, 252, 0.1);
+    color: #06befc;
+    padding: 0.25rem 0.625rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .game-cta {
+    padding: 1rem 2rem;
+    background-color: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .play-button {
+    display: block;
+    text-align: center;
+    background-color: var(--color-accent);
+    color: var(--color-text);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+  }
+
+  .game-card:hover .play-button {
+    background-color: var(--color-accent-hover);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+
+  .empty-state p {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+  }
+
+  .jam-games-cta {
+    padding: 4rem 0;
+  }
+
+  .cta-content {
+    text-align: center;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cta-content h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+
+  .cta-content p {
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    color: var(--color-text);
+  }
+
+  @media (max-width: 640px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .games-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
