@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://Scorespace.github.io',
+  site: 'https://scrspc.github.io',
   base: '/',
   output: 'static',
   trailingSlash: 'always',
