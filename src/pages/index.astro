@@ -47,6 +47,36 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
     </div>
   </section>
 
+  <section class="next-jam">
+    <div class="container">
+      <div class="countdown-wrapper fade-in fade-in-delay-5">
+        <h2>Next Jam Starts In</h2>
+        <div class="countdown" id="countdown">
+          <div class="countdown-item">
+            <span class="countdown-value" id="days">--</span>
+            <span class="countdown-label">Days</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-value" id="hours">--</span>
+            <span class="countdown-label">Hours</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-value" id="minutes">--</span>
+            <span class="countdown-label">Minutes</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-value" id="seconds">--</span>
+            <span class="countdown-label">Seconds</span>
+          </div>
+        </div>
+        <p class="countdown-date" id="countdown-date"></p>
+        <a href="https://discord.gg/kCM89sr" target="_blank" rel="noopener noreferrer" class="btn btn-discord">
+          Join the Discord
+        </a>
+      </div>
+    </div>
+  </section>
+
   <section class="recent-jams">
     <div class="container">
       <h2 class="fade-in fade-in-delay-5">Recent Jams</h2>
@@ -248,6 +278,92 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
     font-size: 0.95rem;
   }
 
+  .next-jam {
+    padding: 3rem 0;
+  }
+
+  .countdown-wrapper {
+    text-align: center;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+  }
+
+  .countdown-wrapper h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text);
+  }
+
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .countdown-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+  }
+
+  .countdown-value {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  .countdown-label {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .countdown-date {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-discord {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--color-accent);
+    color: var(--color-text);
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-discord:hover {
+    background-color: var(--color-accent-hover);
+    color: var(--color-text);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 640px) {
+    .countdown {
+      gap: 1rem;
+    }
+
+    .countdown-item {
+      min-width: 60px;
+    }
+
+    .countdown-value {
+      font-size: 1.75rem;
+    }
+  }
+
   .recent-jams {
     padding: 4rem 0;
   }
@@ -417,4 +533,77 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
   document.querySelectorAll('.stat-card').forEach(card => {
     statObserver.observe(card);
   });
+
+  // Countdown to next 3rd Friday at 3pm EST
+  function getThirdFriday(year: number, month: number): Date {
+    const firstDay = new Date(year, month, 1);
+    const firstFriday = new Date(year, month, 1 + ((5 - firstDay.getDay() + 7) % 7));
+    const thirdFriday = new Date(firstFriday);
+    thirdFriday.setDate(firstFriday.getDate() + 14);
+    // Set to 3pm EST (20:00 UTC)
+    thirdFriday.setUTCHours(20, 0, 0, 0);
+    return thirdFriday;
+  }
+
+  function getNextThirdFriday(): Date {
+    const now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth();
+
+    let thirdFriday = getThirdFriday(year, month);
+
+    if (now >= thirdFriday) {
+      month++;
+      if (month > 11) {
+        month = 0;
+        year++;
+      }
+      thirdFriday = getThirdFriday(year, month);
+    }
+
+    return thirdFriday;
+  }
+
+  function updateCountdown() {
+    const target = getNextThirdFriday();
+    const now = new Date();
+    const diff = target.getTime() - now.getTime();
+
+    if (diff <= 0) {
+      location.reload();
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+
+    if (daysEl) daysEl.textContent = days.toString().padStart(2, '0');
+    if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
+    if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
+    if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
+
+    const dateEl = document.getElementById('countdown-date');
+    if (dateEl) {
+      const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZoneName: 'short'
+      };
+      dateEl.textContent = target.toLocaleDateString(undefined, options);
+    }
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 </script>
