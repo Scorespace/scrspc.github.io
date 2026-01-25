@@ -24,17 +24,21 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
   <body>
     <div class="vignette" aria-hidden="true"></div>
     <a href="https://gamesbeat.com/scorespace-raises-525k-to-scale-game-jam-powered-studio-on-discord-activities/" target="_blank" rel="noopener noreferrer" class="announcement-banner">
+      <svg class="gamesbeat-logo" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="16" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">GB</text>
+      </svg>
       ScoreSpace raises $525K to scale game jam-powered studio
     </a>
     <nav class="nav">
       <div class="nav-container">
+        <div class="nav-links nav-links-left">
+          <a href={`${import.meta.env.BASE_URL}jams/`}>JAMS</a>
+        </div>
         <a href={`${import.meta.env.BASE_URL}`} class="logo">
           <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="logo-img" />
         </a>
-        <div class="nav-links">
-          <a href={`${import.meta.env.BASE_URL}`}>Home</a>
-          <a href={`${import.meta.env.BASE_URL}jams/`}>Jams</a>
-          <a href={`${import.meta.env.BASE_URL}games/`}>Games</a>
+        <div class="nav-links nav-links-right">
+          <a href={`${import.meta.env.BASE_URL}games/`} class="nav-games">GAMES</a>
         </div>
       </div>
     </nav>
@@ -164,9 +168,12 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
 
 <style>
   .announcement-banner {
-    display: block;
-    background: linear-gradient(90deg, #06befc 0%, #a855f7 100%);
-    color: #01071c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background: linear-gradient(90deg, #00d4ff 0%, #8b5cf6 100%);
+    color: white;
     text-align: center;
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
@@ -175,9 +182,14 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
     transition: opacity 0.2s ease;
   }
 
+  .gamesbeat-logo {
+    height: 16px;
+    width: auto;
+  }
+
   .announcement-banner:hover {
     opacity: 0.9;
-    color: #01071c;
+    color: white;
   }
 
   .nav {
@@ -198,10 +210,11 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
   .nav-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 1.5rem;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    gap: 4rem;
   }
 
   .logo {
@@ -227,6 +240,16 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
   .nav-links a {
     font-weight: 500;
     font-size: 0.95rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    transform: scale(1.1);
+    color: var(--color-accent);
+  }
+
+  .nav-links a.nav-games:hover {
+    color: #8b5cf6;
   }
 
   .footer {
