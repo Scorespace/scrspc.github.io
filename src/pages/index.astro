@@ -27,20 +27,20 @@ const recentJams = jams.slice(0, 3);
         <div class="hero-right">
           <div class="stats-grid">
             <div class="stat-card fade-in fade-in-delay-3">
-              <span class="stat-number" data-target={jams.length}>0</span>
-              <span class="stat-label">Game Jams</span>
+              <span class="stat-number">100+</span>
+              <span class="stat-label">Games Submitted Per Month</span>
             </div>
             <div class="stat-card fade-in fade-in-delay-4">
               <span class="stat-number" data-target={totalParticipants}>0</span>
-              <span class="stat-label">Participants</span>
+              <span class="stat-label">Lifetime Participants</span>
             </div>
             <div class="stat-card fade-in fade-in-delay-5">
               <span class="stat-number" data-target={totalSubmissions}>0</span>
               <span class="stat-label">Games Submitted</span>
             </div>
             <div class="stat-card fade-in fade-in-delay-6">
-              <span class="stat-number" data-target={games.length}>0</span>
-              <span class="stat-label">Featured Games</span>
+              <span class="stat-number">5m+</span>
+              <span class="stat-label">Lifetime Players</span>
             </div>
           </div>
         </div>
@@ -107,10 +107,12 @@ const recentJams = jams.slice(0, 3);
   }
 
   .hero-logo {
+    display: block;
     max-width: 350px;
     width: 100%;
     height: auto;
     margin-bottom: 1rem;
+    margin-left: -8px;
   }
 
   .tagline {
@@ -170,6 +172,10 @@ const recentJams = jams.slice(0, 3);
 
     .hero-left {
       text-align: center;
+    }
+
+    .hero-logo {
+      margin: 0 auto 1rem;
     }
 
     .cta-buttons {
