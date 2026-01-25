@@ -32,7 +32,7 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
     <nav class="nav">
       <div class="nav-container">
         <div class="nav-links nav-links-left">
-          <a href={`${import.meta.env.BASE_URL}jams/`}>JAMS</a>
+          <a href={`${import.meta.env.BASE_URL}jams/`} class="nav-jams">JAMS</a>
         </div>
         <a href={`${import.meta.env.BASE_URL}`} class="logo">
           <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="logo-img" />
@@ -66,6 +66,10 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
     --color-accent: #06befc;
     --color-accent-hover: #38cfff;
     --color-border: #1a2744;
+    --color-jams: #06befc;
+    --color-jams-hover: #38cfff;
+    --color-games: #8b5cf6;
+    --color-games-hover: #a78bfa;
     --font-heading: 'Lato', sans-serif;
     --font-body: 'Lato', sans-serif;
   }
@@ -172,7 +176,7 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
     align-items: center;
     justify-content: center;
     gap: 0.25rem;
-    background: linear-gradient(90deg, #00d4ff 0%, #8b5cf6 100%);
+    background: linear-gradient(90deg, #06befc 0%, #8b5cf6 100%);
     color: white;
     text-align: center;
     padding: 0.5rem 1rem;
@@ -245,11 +249,14 @@ const { title, description = "ScoreSpace - Make games. Play games." } = Astro.pr
 
   .nav-links a:hover {
     transform: scale(1.1);
-    color: var(--color-accent);
+  }
+
+  .nav-links a.nav-jams:hover {
+    color: var(--color-jams);
   }
 
   .nav-links a.nav-games:hover {
-    color: #8b5cf6;
+    color: var(--color-games);
   }
 
   .footer {

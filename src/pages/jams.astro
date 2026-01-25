@@ -81,6 +81,7 @@ const years = Object.keys(jamsByYear).map(Number).sort((a, b) => b - a);
   .page-header h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
+    color: var(--color-jams);
   }
 
   .subtitle {
@@ -122,7 +123,7 @@ const years = Object.keys(jamsByYear).map(Number).sort((a, b) => b - a);
   }
 
   .jam-card:hover {
-    border-color: var(--color-accent);
+    border-color: var(--color-jams);
     transform: translateY(-2px);
     color: var(--color-text);
   }

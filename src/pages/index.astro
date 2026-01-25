@@ -9,71 +9,66 @@ const recentJams = jams.slice(0, 3);
 ---
 
 <Layout title="ScoreSpace - Make games. Play games.">
-  <section class="hero">
-    <div class="container">
-      <div class="hero-split">
-        <div class="hero-left">
-          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="hero-logo fade-in fade-in-delay-1" />
-          <p class="tagline fade-in fade-in-delay-2">Make games. Play games.</p>
-          <p class="description fade-in fade-in-delay-3">
-ScoreSpace is a game publisher fueled by monthly gamejams.
-          </p>
-          <div class="cta-buttons fade-in fade-in-delay-4">
-            <a href={`${import.meta.env.BASE_URL}jams/`} class="btn btn-primary">View Jams</a>
-            <a href={`${import.meta.env.BASE_URL}games/`} class="btn btn-secondary">Play Games</a>
-          </div>
+  <section class="diagonal-split">
+    <div class="hero-split fade-in fade-in-delay-1">
+      <div class="hero-left">
+        <h1 class="reveal-text">
+          <span class="line-1">
+            <span class="word">SCORESPACE</span>
+            <span class="word">IS</span>
+            <span class="word">A</span>
+            <span class="word cyan">GAME</span>
+            <span class="word cyan">PUBLISHER</span>
+          </span>
+          <span class="line-2">
+            <span class="word">FUELED</span>
+            <span class="word">BY</span>
+            <span class="word purple nowrap">MONTHLY GAMEJAMS.</span>
+          </span>
+        </h1>
+      </div>
+      <div class="hero-right">
+        <div class="icon-stat cyan-stat">
+          <span class="stat-icon">💻</span>
+          <span class="stat-number">120+</span>
+          <span class="stat-label">Avg Submissions</span>
         </div>
-        <div class="hero-right">
-          <div class="stats-grid">
-            <div class="stat-card fade-in fade-in-delay-3">
-              <span class="stat-number">100+</span>
-              <span class="stat-label">Games Submitted Per Month</span>
-            </div>
-            <div class="stat-card fade-in fade-in-delay-4">
-              <span class="stat-number" data-target={totalParticipants}>0</span>
-              <span class="stat-label">Lifetime Participants</span>
-            </div>
-            <div class="stat-card fade-in fade-in-delay-5">
-              <span class="stat-number" data-target={totalSubmissions}>0</span>
-              <span class="stat-label">Games Submitted</span>
-            </div>
-            <div class="stat-card fade-in fade-in-delay-6">
-              <span class="stat-number">5m+</span>
-              <span class="stat-label">Lifetime Players</span>
-            </div>
-          </div>
+        <div class="icon-stat purple-stat">
+          <span class="stat-icon">🎮</span>
+          <span class="stat-number">5M+</span>
+          <span class="stat-label">Lifetime Players</span>
         </div>
       </div>
     </div>
+
+    <div class="split-container">
+      <a href={`${import.meta.env.BASE_URL}jams/`} class="split-side split-jams fade-in fade-in-delay-2">
+        <div class="split-content">
+          <h2>JAMS</h2>
+          <p class="split-tagline">Join the community</p>
+          <div class="split-countdown">
+            <span class="countdown-mini" id="countdown-mini">Next jam in <strong id="days-mini">--</strong>d <strong id="hours-mini">--</strong>h</span>
+          </div>
+          <span class="split-cta">Enter →</span>
+        </div>
+      </a>
+
+      <a href={`${import.meta.env.BASE_URL}games/`} class="split-side split-games fade-in fade-in-delay-3">
+        <div class="split-content">
+          <h2>GAMES</h2>
+          <p class="split-tagline">Get published</p>
+          <p class="split-description">From jam to published</p>
+          <span class="split-cta">Enter →</span>
+        </div>
+      </a>
+    </div>
   </section>
 
-  <section class="next-jam">
+  <section class="discord-cta">
     <div class="container">
-      <div class="countdown-wrapper fade-in fade-in-delay-5">
-        <h2>Next Jam Starts In</h2>
-        <div class="countdown" id="countdown">
-          <div class="countdown-item">
-            <span class="countdown-value" id="days">--</span>
-            <span class="countdown-label">Days</span>
-          </div>
-          <div class="countdown-item">
-            <span class="countdown-value" id="hours">--</span>
-            <span class="countdown-label">Hours</span>
-          </div>
-          <div class="countdown-item">
-            <span class="countdown-value" id="minutes">--</span>
-            <span class="countdown-label">Minutes</span>
-          </div>
-          <div class="countdown-item">
-            <span class="countdown-value" id="seconds">--</span>
-            <span class="countdown-label">Seconds</span>
-          </div>
-        </div>
-        <p class="countdown-date" id="countdown-date"></p>
-        <a href="https://discord.gg/kCM89sr" target="_blank" rel="noopener noreferrer" class="btn btn-discord">
-          Join the Discord
-        </a>
-      </div>
+      <a href="https://discord.gg/kCM89sr" target="_blank" rel="noopener noreferrer" class="btn btn-discord fade-in fade-in-delay-4">
+        Join the Discord
+      </a>
     </div>
   </section>
 
@@ -115,104 +110,314 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
 </Layout>
 
 <style>
-  .hero {
-    padding: 6rem 0 4rem;
-    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
+  /* Diagonal Split Hero */
+  .diagonal-split {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
   }
 
   .hero-split {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 6rem 8rem 3rem 12rem;
+    max-width: 100%;
+    margin: 0;
     gap: 4rem;
   }
 
   .hero-left {
     flex: 1;
-    text-align: left;
+    max-width: 650px;
+  }
+
+  .hero-left h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    color: var(--color-text);
+  }
+
+  .reveal-text .line-1,
+  .reveal-text .line-2 {
+    display: block;
+  }
+
+  .reveal-text .word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: revealWord 0.5s ease forwards;
+  }
+
+  .reveal-text .line-1 .word:nth-child(1) { animation-delay: 0.1s; }
+  .reveal-text .line-1 .word:nth-child(2) { animation-delay: 0.2s; }
+  .reveal-text .line-1 .word:nth-child(3) { animation-delay: 0.3s; }
+  .reveal-text .line-1 .word:nth-child(4) { animation-delay: 0.4s; }
+  .reveal-text .line-1 .word:nth-child(5) { animation-delay: 0.5s; }
+
+  .reveal-text .line-2 .word:nth-child(1) { animation-delay: 0.7s; }
+  .reveal-text .line-2 .word:nth-child(2) { animation-delay: 0.8s; }
+  .reveal-text .line-2 .word:nth-child(3) { animation-delay: 0.9s; }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  @keyframes revealWord {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero-left h1 .cyan {
+    color: var(--color-jams);
+  }
+
+  .hero-left h1 .purple {
+    color: var(--color-games);
   }
 
   .hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .icon-stat {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .icon-stat .stat-icon {
+    font-size: 2.5rem;
+  }
+
+  .icon-stat .stat-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .cyan-stat .stat-number {
+    color: var(--color-jams);
+  }
+
+  .purple-stat .stat-number {
+    color: var(--color-games);
+  }
+
+  .icon-stat .stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    max-width: 80px;
+    line-height: 1.3;
+  }
+
+  .split-container {
+    display: flex;
     flex: 1;
+    position: relative;
   }
 
-  .hero-logo {
-    display: block;
-    max-width: 350px;
-    width: 100%;
-    height: auto;
-    margin-bottom: 1rem;
-    margin-left: -8px;
-  }
-
-  .tagline {
-    font-family: 'Russo One', sans-serif;
-    font-size: 1.5rem;
+  .split-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-decoration: none;
     color: var(--color-text);
+    transition: flex 0.4s ease, background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .split-jams {
+    background: linear-gradient(135deg, rgba(6, 190, 252, 0.15) 0%, rgba(6, 190, 252, 0.05) 100%);
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+    padding-right: 4rem;
+  }
+
+  .split-jams::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-left: 3px solid var(--color-jams);
+    opacity: 0.5;
+  }
+
+  .split-games {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(139, 92, 246, 0.15) 100%);
+    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+    margin-left: -15%;
+    padding-left: 4rem;
+  }
+
+  .split-games::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-right: 3px solid var(--color-games);
+    opacity: 0.5;
+  }
+
+  .split-side:hover {
+    flex: 1.15;
+  }
+
+  .split-jams:hover {
+    background: linear-gradient(135deg, rgba(6, 190, 252, 0.25) 0%, rgba(6, 190, 252, 0.1) 100%);
+  }
+
+  .split-games:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.25) 100%);
+  }
+
+  .split-content {
+    text-align: center;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .split-content h2 {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .split-jams .split-content h2 {
+    color: var(--color-jams);
+  }
+
+  .split-games .split-content h2 {
+    color: var(--color-games);
+  }
+
+  .split-tagline {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
     margin-bottom: 1.5rem;
   }
 
-  .description {
-    max-width: 500px;
-    margin-bottom: 2rem;
-    color: var(--color-text-muted);
-    font-size: 1.1rem;
-    line-height: 1.6;
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-  }
-
-  .stat-card {
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    text-align: center;
-  }
-
-  .stat-number {
-    display: block;
-    font-family: var(--font-heading);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--color-accent);
-    margin-bottom: 0.25rem;
-  }
-
-  .stat-label {
-    color: var(--color-text-muted);
+  .split-countdown,
+  .split-description {
     font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
   }
 
-  @media (max-width: 900px) {
+  .countdown-mini strong {
+    color: var(--color-jams);
+  }
+
+  .split-cta {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .split-jams .split-cta {
+    border: 2px solid var(--color-jams);
+    color: var(--color-jams);
+  }
+
+  .split-jams:hover .split-cta {
+    background-color: var(--color-jams);
+    color: var(--color-bg);
+  }
+
+  .split-games .split-cta {
+    border: 2px solid var(--color-games);
+    color: var(--color-games);
+  }
+
+  .split-games:hover .split-cta {
+    background-color: var(--color-games);
+    color: var(--color-bg);
+  }
+
+  .discord-cta {
+    text-align: center;
+    padding: 2rem 0 4rem;
+  }
+
+  @media (max-width: 768px) {
+    .diagonal-split {
+      min-height: auto;
+    }
+
+    .split-container {
+      flex-direction: column;
+    }
+
+    .split-side {
+      clip-path: none;
+      margin: 0;
+      padding: 3rem 2rem;
+    }
+
+    .split-jams {
+      padding-right: 2rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .split-games {
+      padding-left: 2rem;
+      margin-left: 0;
+    }
+
+    .split-side:hover {
+      flex: 1;
+    }
+
+    .split-content h2 {
+      font-size: 2rem;
+    }
+
     .hero-split {
       flex-direction: column;
       text-align: center;
+      padding: 4rem 1.5rem 2rem;
+      gap: 2rem;
     }
 
-    .hero-left {
-      text-align: center;
+    .hero-left h1 {
+      font-size: 2rem;
     }
 
-    .hero-logo {
-      margin: 0 auto 1rem;
-    }
-
-    .cta-buttons {
+    .hero-right {
+      flex-direction: row;
+      flex-wrap: wrap;
       justify-content: center;
+      gap: 2rem;
     }
 
-    .description {
-      margin: 0 auto 2rem;
+    .icon-stat .stat-number {
+      font-size: 2.5rem;
+    }
+
+    .icon-stat .stat-icon {
+      font-size: 2rem;
     }
   }
 
@@ -238,97 +443,12 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
   .btn-secondary {
     background-color: transparent;
     color: var(--color-text);
-    border: 2px solid var(--color-border);
+    border: 2px solid var(--color-jams);
   }
 
   .btn-secondary:hover {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .stats {
-    padding: 4rem 0;
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .stat-card {
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-  }
-
-  .stat-number {
-    display: block;
-    font-family: var(--font-heading);
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--color-accent);
-    margin-bottom: 0.5rem;
-  }
-
-  .stat-label {
-    color: var(--color-text-muted);
-    font-size: 0.95rem;
-  }
-
-  .next-jam {
-    padding: 3rem 0;
-  }
-
-  .countdown-wrapper {
-    text-align: center;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    padding: 2.5rem 2rem;
-  }
-
-  .countdown-wrapper h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--color-text);
-  }
-
-  .countdown {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .countdown-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 80px;
-  }
-
-  .countdown-value {
-    font-family: var(--font-heading);
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--color-accent);
-    line-height: 1;
-  }
-
-  .countdown-label {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    margin-top: 0.5rem;
-  }
-
-  .countdown-date {
-    color: var(--color-text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+    background-color: var(--color-jams);
+    color: var(--color-bg);
   }
 
   .btn-discord {
@@ -348,20 +468,6 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
     background-color: var(--color-accent-hover);
     color: var(--color-text);
     transform: translateY(-2px);
-  }
-
-  @media (max-width: 640px) {
-    .countdown {
-      gap: 1rem;
-    }
-
-    .countdown-item {
-      min-width: 60px;
-    }
-
-    .countdown-value {
-      font-size: 1.75rem;
-    }
   }
 
   .recent-jams {
@@ -391,7 +497,7 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
   }
 
   .jam-card:hover {
-    border-color: var(--color-accent);
+    border-color: var(--color-jams);
     transform: translateY(-2px);
     color: var(--color-text);
   }
@@ -475,65 +581,9 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
     text-align: center;
   }
 
-  @media (max-width: 640px) {
-    .hero h1 {
-      font-size: 2.5rem;
-    }
-
-    .tagline {
-      font-size: 1.25rem;
-    }
-
-    .stat-number {
-      font-size: 2rem;
-    }
-  }
 </style>
 
 <script>
-  // Animated stat counters
-  function animateCounter(element: Element, target: number, duration: number = 1500) {
-    const start = 0;
-    const startTime = performance.now();
-
-    function update(currentTime: number) {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-
-      // Ease out cubic for smooth deceleration
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const current = Math.floor(start + (target - start) * easeOut);
-
-      element.textContent = current.toLocaleString();
-
-      if (progress < 1) {
-        requestAnimationFrame(update);
-      } else {
-        element.textContent = target.toLocaleString();
-      }
-    }
-
-    requestAnimationFrame(update);
-  }
-
-  // Observe stat cards and trigger counter animation
-  const statObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const statNumber = entry.target.querySelector('.stat-number[data-target]');
-        if (statNumber) {
-          const target = parseInt(statNumber.getAttribute('data-target') || '0', 10);
-          animateCounter(statNumber, target);
-        }
-        statObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.5 });
-
-  document.querySelectorAll('.stat-card').forEach(card => {
-    statObserver.observe(card);
-  });
-
   // Countdown to next 3rd Friday at 3pm EST
   function getThirdFriday(year: number, month: number): Date {
     const firstDay = new Date(year, month, 1);
@@ -576,32 +626,13 @@ ScoreSpace is a game publisher fueled by monthly gamejams.
 
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
+    // Update mini countdown on diagonal split
+    const daysMiniEl = document.getElementById('days-mini');
+    const hoursMiniEl = document.getElementById('hours-mini');
 
-    if (daysEl) daysEl.textContent = days.toString().padStart(2, '0');
-    if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
-    if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
-    if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
-
-    const dateEl = document.getElementById('countdown-date');
-    if (dateEl) {
-      const options: Intl.DateTimeFormatOptions = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZoneName: 'short'
-      };
-      dateEl.textContent = target.toLocaleDateString(undefined, options);
-    }
+    if (daysMiniEl) daysMiniEl.textContent = days.toString();
+    if (hoursMiniEl) hoursMiniEl.textContent = hours.toString();
   }
 
   updateCountdown();
