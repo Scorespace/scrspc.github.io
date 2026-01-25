@@ -11,37 +11,38 @@ const recentJams = jams.slice(0, 3);
 <Layout title="ScoreSpace - Make games. Play games.">
   <section class="hero">
     <div class="container">
-      <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="hero-logo" />
-      <p class="tagline">Make games. Play games.</p>
-      <p class="description">
-        Hosting game jams since 2019, bringing together developers from around the world
-        to create amazing games in limited time.
-      </p>
-      <div class="cta-buttons">
-        <a href={`${import.meta.env.BASE_URL}jams/`} class="btn btn-primary">View Jams</a>
-        <a href={`${import.meta.env.BASE_URL}games/`} class="btn btn-secondary">Play Games</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="stats">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-number">{jams.length}</span>
-          <span class="stat-label">Game Jams</span>
+      <div class="hero-split">
+        <div class="hero-left">
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="hero-logo" />
+          <p class="tagline">Make games. Play games.</p>
+          <p class="description">
+            Hosting game jams since 2019, bringing together developers from around the world
+            to create amazing games in limited time.
+          </p>
+          <div class="cta-buttons">
+            <a href={`${import.meta.env.BASE_URL}jams/`} class="btn btn-primary">View Jams</a>
+            <a href={`${import.meta.env.BASE_URL}games/`} class="btn btn-secondary">Play Games</a>
+          </div>
         </div>
-        <div class="stat-card">
-          <span class="stat-number">{totalParticipants.toLocaleString()}</span>
-          <span class="stat-label">Participants</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">{totalSubmissions.toLocaleString()}</span>
-          <span class="stat-label">Games Submitted</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-number">{games.length}</span>
-          <span class="stat-label">Featured Games</span>
+        <div class="hero-right">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number">{jams.length}</span>
+              <span class="stat-label">Game Jams</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">{totalParticipants.toLocaleString()}</span>
+              <span class="stat-label">Participants</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">{totalSubmissions.toLocaleString()}</span>
+              <span class="stat-label">Games Submitted</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">{games.length}</span>
+              <span class="stat-label">Featured Games</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -86,12 +87,26 @@ const recentJams = jams.slice(0, 3);
 <style>
   .hero {
     padding: 6rem 0 4rem;
-    text-align: center;
     background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
   }
 
+  .hero-split {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .hero-left {
+    flex: 1;
+    text-align: left;
+  }
+
+  .hero-right {
+    flex: 1;
+  }
+
   .hero-logo {
-    max-width: 400px;
+    max-width: 350px;
     width: 100%;
     height: auto;
     margin-bottom: 1rem;
@@ -105,8 +120,8 @@ const recentJams = jams.slice(0, 3);
   }
 
   .description {
-    max-width: 600px;
-    margin: 0 auto 2rem;
+    max-width: 500px;
+    margin-bottom: 2rem;
     color: var(--color-text-muted);
     font-size: 1.1rem;
     line-height: 1.6;
@@ -115,8 +130,54 @@ const recentJams = jams.slice(0, 3);
   .cta-buttons {
     display: flex;
     gap: 1rem;
-    justify-content: center;
     flex-wrap: wrap;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .stat-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .stat-number {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-bottom: 0.25rem;
+  }
+
+  .stat-label {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 900px) {
+    .hero-split {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .hero-left {
+      text-align: center;
+    }
+
+    .cta-buttons {
+      justify-content: center;
+    }
+
+    .description {
+      margin: 0 auto 2rem;
+    }
   }
 
   .btn {
