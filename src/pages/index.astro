@@ -13,33 +13,33 @@ const recentJams = jams.slice(0, 3);
     <div class="container">
       <div class="hero-split">
         <div class="hero-left">
-          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="hero-logo" />
-          <p class="tagline">Make games. Play games.</p>
-          <p class="description">
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="hero-logo fade-in fade-in-delay-1" />
+          <p class="tagline fade-in fade-in-delay-2">Make games. Play games.</p>
+          <p class="description fade-in fade-in-delay-3">
             Hosting game jams since 2019, bringing together developers from around the world
             to create amazing games in limited time.
           </p>
-          <div class="cta-buttons">
+          <div class="cta-buttons fade-in fade-in-delay-4">
             <a href={`${import.meta.env.BASE_URL}jams/`} class="btn btn-primary">View Jams</a>
             <a href={`${import.meta.env.BASE_URL}games/`} class="btn btn-secondary">Play Games</a>
           </div>
         </div>
         <div class="hero-right">
           <div class="stats-grid">
-            <div class="stat-card">
-              <span class="stat-number">{jams.length}</span>
+            <div class="stat-card fade-in fade-in-delay-3">
+              <span class="stat-number" data-target={jams.length}>0</span>
               <span class="stat-label">Game Jams</span>
             </div>
-            <div class="stat-card">
-              <span class="stat-number">{totalParticipants.toLocaleString()}</span>
+            <div class="stat-card fade-in fade-in-delay-4">
+              <span class="stat-number" data-target={totalParticipants}>0</span>
               <span class="stat-label">Participants</span>
             </div>
-            <div class="stat-card">
-              <span class="stat-number">{totalSubmissions.toLocaleString()}</span>
+            <div class="stat-card fade-in fade-in-delay-5">
+              <span class="stat-number" data-target={totalSubmissions}>0</span>
               <span class="stat-label">Games Submitted</span>
             </div>
-            <div class="stat-card">
-              <span class="stat-number">{games.length}</span>
+            <div class="stat-card fade-in fade-in-delay-6">
+              <span class="stat-number" data-target={games.length}>0</span>
               <span class="stat-label">Featured Games</span>
             </div>
           </div>
@@ -50,12 +50,13 @@ const recentJams = jams.slice(0, 3);
 
   <section class="recent-jams">
     <div class="container">
-      <h2>Recent Jams</h2>
+      <h2 class="fade-in fade-in-delay-5">Recent Jams</h2>
       <div class="jams-grid">
-        {recentJams.map((jam) => {
+        {recentJams.map((jam, index) => {
           const isSpeedJam = jam.name.toLowerCase().includes('speedjam') || jam.name.toLowerCase().includes('foddian');
+          const delayClass = `fade-in-delay-${6 + index}`;
           return (
-          <a href={jam.url} target="_blank" rel="noopener noreferrer" class={`jam-card ${isSpeedJam ? 'speedjam' : ''}`}>
+          <a href={jam.url} target="_blank" rel="noopener noreferrer" class={`jam-card fade-in ${delayClass} ${isSpeedJam ? 'speedjam' : ''}`}>
             <div class="jam-content">
               <div class="jam-info">
                 <h3>{jam.name}</h3>
@@ -145,6 +146,32 @@ const recentJams = jams.slice(0, 3);
     border-radius: 12px;
     padding: 1.5rem;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(6, 190, 252, 0.15);
+    border-color: var(--color-accent);
+  }
+
+  .stat-card:hover::before {
+    transform: scaleX(1);
   }
 
   .stat-number {
@@ -265,21 +292,46 @@ const recentJams = jams.slice(0, 3);
     border: 1px solid var(--color-border);
     border-radius: 12px;
     padding: 1.5rem;
-    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+  }
+
+  .jam-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .jam-card:hover {
     border-color: var(--color-accent);
-    transform: translateY(-2px);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(6, 190, 252, 0.15);
     color: var(--color-text);
+  }
+
+  .jam-card:hover::before {
+    transform: scaleX(1);
   }
 
   .jam-card.speedjam {
     border-color: rgba(0, 255, 12, 0.3);
   }
 
+  .jam-card.speedjam::before {
+    background: #00ff0c;
+  }
+
   .jam-card.speedjam:hover {
     border-color: #00ff0c;
+    box-shadow: 0 12px 40px rgba(0, 255, 12, 0.15);
   }
 
   .jam-card.speedjam .jam-theme {
@@ -367,3 +419,48 @@ const recentJams = jams.slice(0, 3);
     }
   }
 </style>
+
+<script>
+  // Animated stat counters
+  function animateCounter(element: Element, target: number, duration: number = 1500) {
+    const start = 0;
+    const startTime = performance.now();
+
+    function update(currentTime: number) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // Ease out cubic for smooth deceleration
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(start + (target - start) * easeOut);
+
+      element.textContent = current.toLocaleString();
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      } else {
+        element.textContent = target.toLocaleString();
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  // Observe stat cards and trigger counter animation
+  const statObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const statNumber = entry.target.querySelector('.stat-number[data-target]');
+        if (statNumber) {
+          const target = parseInt(statNumber.getAttribute('data-target') || '0', 10);
+          animateCounter(statNumber, target);
+        }
+        statObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.stat-card').forEach(card => {
+    statObserver.observe(card);
+  });
+</script>
