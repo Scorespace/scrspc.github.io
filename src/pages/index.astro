@@ -11,7 +11,7 @@ const recentJams = jams.slice(0, 3);
 <Layout title="ScoreSpace - Make games. Play games.">
   <section class="hero">
     <div class="container">
-      <h1>ScoreSpace</h1>
+      <img src={`${import.meta.env.BASE_URL}logo.png`} alt="ScoreSpace" class="hero-logo" />
       <p class="tagline">Make games. Play games.</p>
       <p class="description">
         Hosting game jams since 2019, bringing together developers from around the world
@@ -90,10 +90,11 @@ const recentJams = jams.slice(0, 3);
     background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
   }
 
-  .hero h1 {
-    font-size: 4rem;
-    color: var(--color-accent);
-    margin-bottom: 0.5rem;
+  .hero-logo {
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
   }
 
   .tagline {
