@@ -1,43 +1,82 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { jams } from '../data/jams';
-import { games } from '../data/games';
-
-const totalParticipants = jams.reduce((sum, jam) => sum + jam.participants, 0);
-const totalSubmissions = jams.reduce((sum, jam) => sum + jam.submissions, 0);
-const recentJams = jams.slice(0, 3);
 ---
 
 <Layout title="ScoreSpace - Make games. Play games.">
   <section class="diagonal-split">
     <div class="hero-split fade-in fade-in-delay-1">
-      <div class="hero-left">
-        <h1 class="reveal-text">
-          <span class="line-1">
-            <span class="word">SCORESPACE</span>
-            <span class="word">IS</span>
-            <span class="word">A</span>
-            <span class="word cyan">GAME</span>
-            <span class="word cyan">PUBLISHER</span>
-          </span>
-          <span class="line-2">
-            <span class="word">FUELED</span>
-            <span class="word">BY</span>
-            <span class="word purple nowrap">MONTHLY GAMEJAMS.</span>
-          </span>
-        </h1>
+      <div class="hero-bg" aria-hidden="true">
+        <div class="stars"></div>
+        <div class="star-twinkle twinkle-1"></div>
+        <div class="star-twinkle twinkle-2"></div>
+        <div class="star-twinkle twinkle-3"></div>
+        <div class="star-twinkle twinkle-4"></div>
+        <div class="star-twinkle twinkle-5"></div>
       </div>
-      <div class="hero-right">
+      <h1 class="reveal-text">
+        <span class="line-1">
+          <span class="word">SCORESPACE</span>
+          <span class="word">IS</span>
+          <span class="word">A</span>
+        </span>
+        <span class="line-2">
+          <span class="word cyan">COMMUNITY</span>
+          <span class="word cyan">POWERED</span>
+        </span>
+        <span class="line-3">
+          <span class="word purple nowrap">GAME PUBLISHER</span>
+        </span>
+      </h1>
+      <div class="hero-stats">
         <div class="icon-stat cyan-stat">
           <span class="stat-icon">💻</span>
-          <span class="stat-number">120+</span>
+          <span class="stat-number" data-count-to="120" data-count-suffix="+">0+</span>
           <span class="stat-label">Avg Monthly<br/>Submissions</span>
         </div>
         <div class="icon-stat purple-stat">
           <span class="stat-icon">🎮</span>
-          <span class="stat-number">5M+</span>
+          <span class="stat-number" data-count-to="5" data-count-suffix="M+">0M+</span>
           <span class="stat-label">Lifetime<br/>Players</span>
         </div>
+      </div>
+    </div>
+
+    <div class="pipeline-section">
+      <h2 class="pipeline-heading scroll-fade-in">HOW WE PUBLISH</h2>
+      <div class="stepper scroll-fade-in">
+        <div class="stepper-track">
+          <div class="stepper-fill"></div>
+        </div>
+        <button class="stepper-node active" data-step="0"><span>01</span></button>
+        <button class="stepper-node" data-step="1"><span>02</span></button>
+        <button class="stepper-node" data-step="2"><span>03</span></button>
+      </div>
+      <div class="stepper-panels scroll-fade-in">
+        <div class="stepper-panel active" data-panel="0">
+          <div class="panel-bg-text" aria-hidden="true">JAMS</div>
+          <div class="panel-content">
+            <h3 class="panel-title cyan-text">GENERATE</h3>
+            <p class="panel-desc">Our monthly game jams produce fresh concepts from a global community of developers.</p>
+          </div>
+        </div>
+        <div class="stepper-panel" data-panel="1">
+          <div class="panel-bg-text" aria-hidden="true">TEST</div>
+          <div class="panel-content">
+            <h3 class="panel-title blend-text">VALIDATE</h3>
+            <p class="panel-desc">Top games get a live test with real players to prove the concept before we go bigger.</p>
+          </div>
+        </div>
+        <div class="stepper-panel" data-panel="2">
+          <div class="panel-bg-text" aria-hidden="true">PUBLISH</div>
+          <div class="panel-content">
+            <h3 class="panel-title purple-text">SCALE</h3>
+            <p class="panel-desc">Proven hits get full publishing support, monetization, and a dedicated team to grow.</p>
+          </div>
+        </div>
+      </div>
+      <div class="stepper-nav scroll-fade-in">
+        <button class="stepper-prev" disabled>← Prev</button>
+        <button class="stepper-next">Next →</button>
       </div>
     </div>
 
@@ -63,50 +102,6 @@ const recentJams = jams.slice(0, 3);
       </a>
     </div>
   </section>
-
-  <section class="discord-cta">
-    <div class="container">
-      <a href="https://discord.gg/kCM89sr" target="_blank" rel="noopener noreferrer" class="btn btn-discord fade-in fade-in-delay-4">
-        Join the Discord
-      </a>
-    </div>
-  </section>
-
-  <section class="recent-jams">
-    <div class="container">
-      <h2 class="fade-in fade-in-delay-5">Recent Jams</h2>
-      <div class="jams-grid">
-        {recentJams.map((jam, index) => {
-          const isSpeedJam = jam.name.toLowerCase().includes('speedjam') || jam.name.toLowerCase().includes('foddian');
-          const delayClass = `fade-in-delay-${6 + index}`;
-          return (
-          <a href={jam.url} target="_blank" rel="noopener noreferrer" class={`jam-card fade-in ${delayClass} ${isSpeedJam ? 'speedjam' : ''}`}>
-            <div class="jam-content">
-              <div class="jam-info">
-                <h3>{jam.name}</h3>
-                <div class="jam-date">{new Date(jam.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-                <div class="jam-stats">
-                  <div class="stat">
-                    <span class="stat-value">{jam.participants.toLocaleString()}</span>
-                    <span class="stat-label">Participants</span>
-                  </div>
-                  <div class="stat">
-                    <span class="stat-value">{jam.submissions}</span>
-                    <span class="stat-label">Submissions</span>
-                  </div>
-                </div>
-              </div>
-              {jam.theme && <div class="jam-theme">{jam.theme}</div>}
-            </div>
-          </a>
-        );
-        })}
-      </div>
-      <div class="section-cta">
-        <a href={`${import.meta.env.BASE_URL}jams/`} class="btn btn-secondary">View All Jams</a>
-      </div>
-    </div>
-  </section>
 </Layout>
 
 <style>
@@ -118,22 +113,76 @@ const recentJams = jams.slice(0, 3);
     position: relative;
   }
 
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 8%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 60%, rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.35) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 80%, rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 5% 50%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 65% 10%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 72%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 20% 90%, rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1px 1px at 95% 85%, rgba(255,255,255,0.35) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 25%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 60%, rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  }
+
+  .star-twinkle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  .twinkle-1 { top: 12%; left: 22%; animation-delay: 0s; }
+  .twinkle-2 { top: 40%; left: 75%; animation-delay: 1.2s; }
+  .twinkle-3 { top: 65%; left: 45%; animation-delay: 2.4s; }
+  .twinkle-4 { top: 25%; left: 88%; animation-delay: 0.8s; }
+  .twinkle-5 { top: 80%; left: 15%; animation-delay: 1.8s; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
   .hero-split {
+    position: relative;
+    overflow: hidden;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 6rem 8rem 3rem 12rem;
+    text-align: center;
+    padding: 6rem 2rem 3rem;
     max-width: 100%;
     margin: 0;
-    gap: 4rem;
+    gap: 2.5rem;
   }
 
-  .hero-left {
-    flex: 1;
-    max-width: 650px;
-  }
-
-  .hero-left h1 {
+  .hero-split h1 {
     font-size: 4rem;
     font-weight: 900;
     letter-spacing: 0.02em;
@@ -142,7 +191,8 @@ const recentJams = jams.slice(0, 3);
   }
 
   .reveal-text .line-1,
-  .reveal-text .line-2 {
+  .reveal-text .line-2,
+  .reveal-text .line-3 {
     display: block;
   }
 
@@ -156,12 +206,11 @@ const recentJams = jams.slice(0, 3);
   .reveal-text .line-1 .word:nth-child(1) { animation-delay: 0.1s; }
   .reveal-text .line-1 .word:nth-child(2) { animation-delay: 0.2s; }
   .reveal-text .line-1 .word:nth-child(3) { animation-delay: 0.3s; }
-  .reveal-text .line-1 .word:nth-child(4) { animation-delay: 0.4s; }
-  .reveal-text .line-1 .word:nth-child(5) { animation-delay: 0.5s; }
 
-  .reveal-text .line-2 .word:nth-child(1) { animation-delay: 0.7s; }
-  .reveal-text .line-2 .word:nth-child(2) { animation-delay: 0.8s; }
-  .reveal-text .line-2 .word:nth-child(3) { animation-delay: 0.9s; }
+  .reveal-text .line-2 .word:nth-child(1) { animation-delay: 0.5s; }
+  .reveal-text .line-2 .word:nth-child(2) { animation-delay: 0.6s; }
+
+  .reveal-text .line-3 .word:nth-child(1) { animation-delay: 0.8s; }
 
   .nowrap {
     white-space: nowrap;
@@ -174,18 +223,18 @@ const recentJams = jams.slice(0, 3);
     }
   }
 
-  .hero-left h1 .cyan {
+  .hero-split h1 .cyan {
     color: var(--color-jams);
   }
 
-  .hero-left h1 .purple {
+  .hero-split h1 .purple {
     color: var(--color-games);
   }
 
-  .hero-right {
+  .hero-stats {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    justify-content: center;
+    gap: 4rem;
   }
 
   .icon-stat {
@@ -232,7 +281,7 @@ const recentJams = jams.slice(0, 3);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem 2rem;
+    padding: 12rem 2rem;
     text-decoration: none;
     color: var(--color-text);
     transition: flex 0.4s ease, background-color 0.3s ease;
@@ -355,9 +404,216 @@ const recentJams = jams.slice(0, 3);
     color: var(--color-bg);
   }
 
-  .discord-cta {
+  /* Publishing Pipeline - Progress Bar Stepper */
+  .pipeline-section {
+    padding: 8rem 2rem;
+  }
+
+  .pipeline-heading {
     text-align: center;
-    padding: 2rem 0 4rem;
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    margin-bottom: 3rem;
+    color: var(--color-text);
+  }
+
+  .stepper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 500px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .stepper-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-border);
+    transform: translateY(-50%);
+    z-index: 0;
+    border-radius: 1px;
+  }
+
+  .stepper-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-jams), #6b8af9, var(--color-games));
+    border-radius: 1px;
+    transition: width 0.4s ease;
+  }
+
+  .stepper-node {
+    position: relative;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stepper-node:hover {
+    border-color: var(--color-text-muted);
+  }
+
+  .stepper-node.active {
+    color: var(--color-text);
+    transform: scale(1.15);
+  }
+
+  .stepper-node[data-step="0"].active {
+    border-color: var(--color-jams);
+    box-shadow: 0 0 12px rgba(6, 190, 252, 0.3);
+  }
+
+  .stepper-node[data-step="1"].active {
+    border-color: #6b8af9;
+    box-shadow: 0 0 12px rgba(107, 138, 249, 0.3);
+  }
+
+  .stepper-node[data-step="2"].active {
+    border-color: var(--color-games);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+  }
+
+  .stepper-node.visited {
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+  }
+
+  .stepper-panels {
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+    min-height: 14rem;
+    overflow: hidden;
+  }
+
+  .stepper-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 14rem;
+  }
+
+  .stepper-panel.active {
+    position: relative;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .panel-bg-text {
+    position: absolute;
+    font-size: 10rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    opacity: 0.05;
+    user-select: none;
+    pointer-events: none;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--color-text);
+  }
+
+  .panel-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .panel-title {
+    font-size: 3rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .panel-title.cyan-text { color: var(--color-jams); }
+  .panel-title.blend-text { color: #6b8af9; }
+  .panel-title.purple-text { color: var(--color-games); }
+
+  .panel-desc {
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .stepper-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .stepper-prev,
+  .stepper-next {
+    padding: 0.6rem 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .stepper-prev:hover:not(:disabled),
+  .stepper-next:hover:not(:disabled) {
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+  }
+
+  .stepper-prev:disabled,
+  .stepper-next:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    .pipeline-section {
+      padding: 5rem 1.5rem;
+    }
+
+    .stepper {
+      max-width: 280px;
+    }
+
+    .panel-bg-text {
+      font-size: 5rem;
+    }
+
+    .panel-title {
+      font-size: 2rem;
+    }
   }
 
   @media (max-width: 768px) {
@@ -394,20 +650,15 @@ const recentJams = jams.slice(0, 3);
     }
 
     .hero-split {
-      flex-direction: column;
-      text-align: center;
       padding: 4rem 1.5rem 2rem;
-      gap: 2rem;
+      gap: 1.5rem;
     }
 
-    .hero-left h1 {
+    .hero-split h1 {
       font-size: 2rem;
     }
 
-    .hero-right {
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: center;
+    .hero-stats {
       gap: 2rem;
     }
 
@@ -450,135 +701,6 @@ const recentJams = jams.slice(0, 3);
     color: var(--color-bg);
   }
 
-  .btn-discord {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: var(--color-accent);
-    color: var(--color-text);
-    padding: 0.875rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-  }
-
-  .btn-discord:hover {
-    background-color: var(--color-accent-hover);
-    color: var(--color-text);
-    transform: translateY(-2px);
-  }
-
-  .recent-jams {
-    padding: 4rem 0;
-  }
-
-  .recent-jams h2 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    text-align: center;
-  }
-
-  .jams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .jam-card {
-    display: block;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    transition: all 0.2s ease;
-  }
-
-  .jam-card:hover {
-    border-color: var(--color-jams);
-    transform: translateY(-2px);
-    color: var(--color-text);
-  }
-
-  .jam-card.speedjam {
-    border-color: rgba(0, 255, 12, 0.3);
-  }
-
-  .jam-card.speedjam:hover {
-    border-color: #00ff0c;
-  }
-
-  .jam-card.speedjam .jam-theme {
-    color: #00ff0c;
-  }
-
-  .jam-card.speedjam .stat-value {
-    color: #00ff0c;
-  }
-
-  .jam-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .jam-info {
-    flex: 1;
-  }
-
-  .jam-card h3 {
-    font-size: 1.1rem;
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
-  }
-
-  .jam-theme {
-    font-family: 'Lato', sans-serif;
-    font-weight: 700;
-    color: #06befc;
-    text-transform: uppercase;
-    font-size: 1.05rem;
-    letter-spacing: 0.5px;
-    text-align: center;
-    width: 120px;
-    flex-shrink: 0;
-    line-height: 1.3;
-    word-wrap: break-word;
-  }
-
-  .jam-date {
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-
-  .jam-stats {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .stat-value {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #06befc;
-  }
-
-  .stat-label {
-    color: var(--color-text-muted);
-    font-size: 0.8rem;
-  }
-
-  .section-cta {
-    text-align: center;
-  }
 
 </style>
 
@@ -636,4 +758,67 @@ const recentJams = jams.slice(0, 3);
 
   updateCountdown();
   setInterval(updateCountdown, 1000);
+
+  // Count-up animation for hero stats
+  function animateCount(el: HTMLElement) {
+    const target = parseInt(el.dataset.countTo!, 10);
+    const suffix = el.dataset.countSuffix || '';
+    const duration = 1500;
+    const start = performance.now();
+
+    function tick(now: number) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out quad
+      const eased = 1 - (1 - progress) * (1 - progress);
+      const current = Math.round(eased * target);
+      el.textContent = current + suffix;
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      }
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  const countEls = document.querySelectorAll<HTMLElement>('[data-count-to]');
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCount(entry.target as HTMLElement);
+        countObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  countEls.forEach(el => countObserver.observe(el));
+
+  // Progress bar stepper
+  const nodes = document.querySelectorAll<HTMLElement>('.stepper-node');
+  const panels = document.querySelectorAll<HTMLElement>('.stepper-panel');
+  const fill = document.querySelector<HTMLElement>('.stepper-fill');
+  const prevBtn = document.querySelector<HTMLButtonElement>('.stepper-prev');
+  const nextBtn = document.querySelector<HTMLButtonElement>('.stepper-next');
+  let current = 0;
+
+  function goToStep(idx: number) {
+    current = idx;
+    nodes.forEach((n, i) => {
+      n.classList.toggle('active', i === idx);
+      n.classList.toggle('visited', i < idx);
+    });
+    panels.forEach(p => p.classList.remove('active'));
+    panels[idx]?.classList.add('active');
+    if (fill) fill.style.width = `${(idx / (nodes.length - 1)) * 100}%`;
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === nodes.length - 1;
+  }
+
+  nodes.forEach(node => {
+    node.addEventListener('click', () => goToStep(parseInt(node.dataset.step!, 10)));
+  });
+
+  prevBtn?.addEventListener('click', () => { if (current > 0) goToStep(current - 1); });
+  nextBtn?.addEventListener('click', () => { if (current < nodes.length - 1) goToStep(current + 1); });
+
 </script>
