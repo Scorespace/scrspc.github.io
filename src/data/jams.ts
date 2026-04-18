@@ -403,3 +403,7 @@ export const jams: Jam[] = [
     url: "https://itch.io/jam/scorejam6"
   }
 ];
+
+export const themeByUrl: Record<string, string> = Object.fromEntries(
+  jams.filter(j => j.url && j.theme).map(j => [j.url!, j.theme!])
+);

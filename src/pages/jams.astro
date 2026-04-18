@@ -1,18 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { jams } from '../data/jams';
+import { jams, themeByUrl, type Jam } from '../data/jams';
+import { fetchScoreSpaceJams } from '../lib/itch-jams';
 
-const totalParticipants = jams.reduce((sum, jam) => sum + jam.participants, 0);
-const totalSubmissions = jams.reduce((sum, jam) => sum + jam.submissions, 0);
+const fetched = await fetchScoreSpaceJams();
+const source: Jam[] = fetched.length
+  ? fetched.map(j => ({ ...j, theme: j.url ? themeByUrl[j.url] : undefined }))
+  : jams;
 
-const jamsByYear = jams.reduce((acc, jam) => {
+const totalParticipants = source.reduce((sum, jam) => sum + jam.participants, 0);
+const totalSubmissions = source.reduce((sum, jam) => sum + jam.submissions, 0);
+
+const jamsByYear = source.reduce((acc, jam) => {
   const year = new Date(jam.date).getFullYear();
   if (!acc[year]) {
     acc[year] = [];
   }
   acc[year].push(jam);
   return acc;
-}, {} as Record<number, typeof jams>);
+}, {} as Record<number, Jam[]>);
 
 const years = Object.keys(jamsByYear).map(Number).sort((a, b) => b - a);
 ---
@@ -22,7 +28,7 @@ const years = Object.keys(jamsByYear).map(Number).sort((a, b) => b - a);
     <div class="container">
       <h1>Game Jams</h1>
       <p class="subtitle">
-        {jams.length} jams hosted since 2019, with {totalParticipants.toLocaleString()} participants
+        {source.length} jams hosted since 2019, with {totalParticipants.toLocaleString()} participants
         and {totalSubmissions.toLocaleString()} games submitted.
       </p>
     </div>

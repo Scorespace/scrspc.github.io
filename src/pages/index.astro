@@ -1,12 +1,18 @@
 ---
-import { jams } from '../data/jams';
+import { jams, themeByUrl } from '../data/jams';
+import { fetchScoreSpaceJams } from '../lib/itch-jams';
 
 const BASE = import.meta.env.BASE_URL;
 
 type JamEntry = typeof jams[number];
 
+const fetched = await fetchScoreSpaceJams();
+const source: JamEntry[] = fetched.length
+  ? fetched.map(j => ({ ...j, theme: j.url ? themeByUrl[j.url] : undefined }))
+  : jams;
+
 const byYear = new Map<number, JamEntry[]>();
-for (const j of jams) {
+for (const j of source) {
   const y = new Date(j.date).getFullYear();
   if (!byYear.has(y)) byYear.set(y, []);
   byYear.get(y)!.push(j);
@@ -138,7 +144,7 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
   <div class="container">
     <div class="sec-head">
       <span class="kicker">How we publish</span>
-      <h2>Jam. <span class="accent-c">Test.</span> <span class="accent-v">Ship.</span></h2>
+      <h2><span class="accent-c">Jam.</span> <span class="accent-v">Test.</span> Grow.</h2>
       <p class="lede">Every month, our community events help us find and test promising game concepts.</p>
     </div>
 
