@@ -47,14 +47,12 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
 <nav class="nav">
   <div class="nav-inner">
     <a href="#top" class="brand">
-      <span class="brand-dot"></span>
-      <span>ScoreSpace</span>
+      <img src={`${BASE}logo.png`} alt="ScoreSpace" class="brand-logo" />
     </a>
     <div class="nav-links">
       <a href="#publishing">Publishing</a>
       <a href="#games">Games</a>
       <a href="#jams">Jams</a>
-      <a href="#join">Community</a>
     </div>
     <div class="nav-cta">
       <a class="btn-chip" href="https://discord.gg/kCM89sr" target="_blank" rel="noopener">
@@ -111,27 +109,24 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
 
     <div class="jams-boxes">
       <div class="jbox scorejam">
-        <div class="jbox-media" aria-hidden="true">
-          <span class="ph-label">ScoreJam · Image</span>
-          <svg class="ph-cross" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="0" y1="0" x2="100" y2="100"/><line x1="100" y1="0" x2="0" y2="100"/></svg>
+        <div class="jbox-media">
+          <img src={`${BASE}events/scorejam.png`} alt="ScoreJam" />
         </div>
         <h3 class="jbox-title">ScoreJam</h3>
         <p class="jbox-desc">An arcade-focused game jam where game developers have to make a game with a leaderboard feature. After the event ends, streamers play the top games for high scores.</p>
       </div>
 
       <div class="jbox speedjam">
-        <div class="jbox-media" aria-hidden="true">
-          <span class="ph-label">SpeedJam · Image</span>
-          <svg class="ph-cross" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="0" y1="0" x2="100" y2="100"/><line x1="100" y1="0" x2="0" y2="100"/></svg>
+        <div class="jbox-media">
+          <img src={`${BASE}events/speedjam.png`} alt="SpeedJam" />
         </div>
         <h3 class="jbox-title">SpeedJam</h3>
         <p class="jbox-desc">A jam inspired by speedrunning culture, SpeedJam is like ScoreJam but in this iteration developers make games that are meant to be played as fast as possible. After the event ends, speedrunners race for the fastest times.</p>
       </div>
 
       <div class="jbox scorespacex">
-        <div class="jbox-media" aria-hidden="true">
-          <span class="ph-label">ScoreSpace X · Image</span>
-          <svg class="ph-cross" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1="0" y1="0" x2="100" y2="100"/><line x1="100" y1="0" x2="0" y2="100"/></svg>
+        <div class="jbox-media">
+          <img src={`${BASE}events/scorespacex.png`} alt="ScoreSpace X" />
         </div>
         <h3 class="jbox-title">ScoreSpace X</h3>
         <p class="jbox-desc">Occasionally, we will partner with a third party (creator, platform, etc.) to provide a unique one-off experience to our developer base.</p>
@@ -258,22 +253,10 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
   </div>
 </section>
 
-<section class="closeout" id="join">
-  <div class="container">
-    <span class="kicker">Join the community</span>
-    <h2>Build something <span class="a">worth</span> <span class="b">shipping.</span></h2>
-    <p class="deck">A global community of devs, a monthly deadline, and a real path to published. The next theme drops in days.</p>
-    <div class="close-row">
-      <a class="btn primary" href="https://discord.gg/kCM89sr" target="_blank" rel="noopener">Join Discord <span class="arrow">→</span></a>
-      <a class="btn" href="https://itch.io/jams/hosted-by-scorespace" target="_blank" rel="noopener">Browse on itch</a>
-    </div>
-  </div>
-</section>
-
 <footer class="foot">
   <div class="container">
     <div class="col colophon">
-      <div class="big">ScoreSpace</div>
+      <img src={`${BASE}logo.png`} alt="ScoreSpace" class="foot-logo" />
       Make games. Play games. Ship the good ones.<br/><br/>
       © {new Date().getFullYear()} ScoreSpace.
     </div>
@@ -402,16 +385,13 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
     gap: 20px;
   }
   .brand {
-    display: flex; align-items: center; gap: 12px;
-    font-family: var(--head); font-size: 16px; letter-spacing: .02em;
+    display: flex; align-items: center;
+    transition: opacity .2s ease;
   }
-  .brand-dot {
-    width: 14px; height: 14px; border-radius: 50%;
-    background: conic-gradient(from 210deg, var(--cyan), var(--violet), var(--cyan));
-    box-shadow: 0 0 16px rgba(6,190,252,.55);
-    animation: spin 6s linear infinite;
+  .brand:hover { opacity: .8; }
+  .brand-logo {
+    height: 48px; width: auto; display: block;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
   .nav-links {
     display: flex; justify-content: center; gap: 36px;
     font-family: var(--head); font-size: 13px; letter-spacing: .06em; text-transform: uppercase;
@@ -558,22 +538,12 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
     border: 0;
     border-bottom: 1.5px solid var(--cyan);
     border-radius: 0;
-    background: rgba(6,190,252,.04);
-    display: flex; align-items: center; justify-content: center;
+    background: #000;
     overflow: hidden;
   }
-  .jbox-media .ph-cross {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    stroke: var(--cyan); stroke-width: 1; opacity: .35;
-  }
-  .jbox-media .ph-label {
-    position: relative; z-index: 1;
-    font-family: var(--head); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
-    color: var(--cyan);
-    background: var(--ink);
-    padding: 6px 14px;
-    border: 1px solid var(--cyan);
-    border-radius: 999px;
+  .jbox-media img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
   }
   .jbox-title {
     font-family: var(--head);
@@ -649,7 +619,8 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
   .game.coming-soon .go:hover { background: var(--cyan); color: var(--ink); }
   .thumb-ph {
     position: absolute; inset: 0; padding: 28px;
-    display: flex; flex-direction: column; justify-content: space-between;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
     font-family: var(--head); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--fog);
   }
   .thumb-ph .title {
@@ -749,31 +720,6 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
     .jam-row .go { display: none; }
   }
 
-  /* CLOSEOUT */
-  .closeout {
-    padding: clamp(100px, 14vw, 180px) 0;
-    position: relative; overflow: hidden;
-    background:
-      radial-gradient(ellipse at 20% 10%, rgba(122,43,255,.35), transparent 55%),
-      radial-gradient(ellipse at 80% 90%, rgba(6,190,252,.3), transparent 55%),
-      var(--ink);
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    text-align: center;
-  }
-  .closeout .kicker { margin-bottom: 28px; display: inline-block; }
-  .closeout h2 {
-    font-size: clamp(64px, 11vw, 200px); line-height: .92; letter-spacing: -.02em;
-    max-width: 14ch; margin: 0 auto 32px;
-  }
-  .closeout h2 .a { color: var(--cyan); }
-  .closeout h2 .b { color: var(--violet-soft); }
-  .closeout p.deck {
-    max-width: 600px; margin: 0 auto 44px;
-    color: var(--fog); font-size: 18px; line-height: 1.65; font-weight: 300;
-  }
-  .close-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-
   /* FOOTER */
   .foot {
     padding: 56px 0 40px; border-top: 1px solid var(--line);
@@ -791,10 +737,7 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
   }
   .foot .col a:hover { color: var(--cyan); }
   .foot .colophon { color: var(--mute); font-size: 12px; font-weight: 300; max-width: 320px; }
-  .foot .colophon .big {
-    font-family: var(--head); font-size: 22px; color: #fff; margin-bottom: 10px;
-    letter-spacing: -.01em; line-height: 1.1;
-  }
+  .foot-logo { height: 40px; width: auto; display: block; margin-bottom: 14px; }
 
   @media (max-width: 880px) {
     .foot .container { grid-template-columns: 1fr 1fr; gap: 28px; }
