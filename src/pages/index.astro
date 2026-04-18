@@ -4,6 +4,11 @@ import { fetchScoreSpaceJams } from '../lib/itch-jams';
 
 const BASE = import.meta.env.BASE_URL;
 
+const pageTitle = 'ScoreSpace — Community-powered game publisher';
+const pageDescription = 'ScoreSpace is a game publisher fueled by monthly game jam events.';
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+
 type JamEntry = typeof jams[number];
 
 const fetched = await fetchScoreSpaceJams();
@@ -34,8 +39,21 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ScoreSpace — Community-powered game publisher</title>
-<meta name="description" content="ScoreSpace is a community-powered game publisher. Monthly game jams, live player testing, and a real path to published." />
+<title>{pageTitle}</title>
+<meta name="description" content={pageDescription} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="ScoreSpace" />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={pageDescription} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={pageDescription} />
+<meta name="twitter:image" content={ogImage} />
 <link rel="icon" type="image/png" href={`${BASE}favicon.png`} />
 <link rel="apple-touch-icon" href={`${BASE}apple-touch-icon.png`} />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
