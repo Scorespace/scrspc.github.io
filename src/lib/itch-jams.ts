@@ -1,7 +1,7 @@
 import type { Jam } from '../data/jams';
 
 const LISTING_URL = 'https://itch.io/jams/hosted-by-scorespace';
-const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
+const UA = 'scorespace-site/1.0 (+https://scorespace.net)';
 const MAX_PAGES = 10;
 
 function decodeHtml(s: string): string {
@@ -14,7 +14,7 @@ function decodeHtml(s: string): string {
 }
 
 function stripTrailingDecor(s: string): string {
-  return s.replace(/[\p{Extended_Pictographic}\p{Emoji_Modifier}\s]+$/gu, '').trim();
+  return s.replace(/[\p{Extended_Pictographic}\p{Emoji_Modifier}\u200D\uFE0F\s]+$/gu, '').trim();
 }
 
 function parseInt10(s: string): number {
@@ -27,7 +27,7 @@ function parsePage(html: string): Omit<Jam, 'theme'>[] {
   for (const block of blocks) {
     const link = block.match(/<h3[^>]*><a href="(\/jam\/[^"]+)"[^>]*>([^<]+)<\/a><\/h3>/);
     if (!link) continue;
-    const date = block.match(/<span class="date_countdown"[^>]*>([^<]+)<\/span>/);
+    const date = block.match(/<span[^>]*class="date_countdown"[^>]*>([^<]+)<\/span>/);
     const joined = block.match(/<div class="stat"><span class="number">([^<]+)<\/span>\s*joined<\/div>/);
     const subs = block.match(/<span class="number">([^<]+)<\/span>\s*submissions/);
     if (!date || !joined) continue;
