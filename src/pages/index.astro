@@ -225,18 +225,6 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
       <p class="lede">Every ScoreSpace jam we've ever held, year by year.</p>
     </div>
 
-    <div class="next-jam">
-      <div>
-        <h3>Next jam drops <span class="a">soon.</span></h3>
-        <p>Kicks off the third Friday of every month at 3PM EST. Drop into Discord to see the theme and find a team.</p>
-      </div>
-      <div class="clock">
-        <div class="u"><span class="v" id="cd-d">--</span><div class="l">Days</div></div>
-        <div class="u"><span class="v" id="cd-h">--</span><div class="l">Hours</div></div>
-        <div class="u"><span class="v" id="cd-m">--</span><div class="l">Mins</div></div>
-      </div>
-    </div>
-
     <div id="archive">
       {years.map((y) => {
         const list = byYear.get(y)!;
@@ -321,15 +309,8 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
     if (diff <= 0) return;
     var d = Math.floor(diff / 864e5);
     var h = Math.floor((diff % 864e5) / 36e5);
-    var mm = Math.floor((diff % 36e5) / 6e4);
-    ['cd-d', 'hm-days'].forEach(function (id) {
-      var e = document.getElementById(id); if (e) e.textContent = d;
-    });
-    ['cd-h', 'hm-hours'].forEach(function (id) {
-      var e = document.getElementById(id); if (e) e.textContent = pad(h);
-    });
-    var me = document.getElementById('cd-m');
-    if (me) me.textContent = pad(mm);
+    var de = document.getElementById('hm-days'); if (de) de.textContent = d;
+    var he = document.getElementById('hm-hours'); if (he) he.textContent = pad(h);
   }
   tick();
   setInterval(tick, 30000);
@@ -663,36 +644,6 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
   .game .go:hover { background: var(--cyan); color: var(--ink); }
   .game:nth-child(2) .go:hover { background: var(--violet-soft); color: var(--ink); }
 
-  /* NEXT JAM panel */
-  .next-jam {
-    display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 48px;
-    padding: 56px; border-radius: 32px;
-    background:
-      radial-gradient(ellipse at 100% 100%, rgba(122,43,255,.25), transparent 55%),
-      radial-gradient(ellipse at 0% 0%, rgba(6,190,252,.18), transparent 55%),
-      var(--ink-2);
-    border: 1px solid var(--line);
-    margin-bottom: 80px;
-  }
-  .next-jam .k {
-    font-family: var(--head); font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
-    color: var(--cyan); margin-bottom: 14px;
-  }
-  .next-jam h3 { font-size: clamp(36px, 4.5vw, 64px); letter-spacing: -.01em; }
-  .next-jam h3 .a { color: var(--violet-soft); }
-  .next-jam p { color: var(--fog); margin-top: 14px; font-size: 16px; max-width: 520px; font-weight: 300; }
-
-  .clock { display: flex; gap: 16px; }
-  .clock .u {
-    text-align: center; min-width: 88px; padding: 18px 6px; border-radius: 16px;
-    background: rgba(255,255,255,.04); border: 1px solid var(--line);
-  }
-  .clock .v { font-family: var(--head); font-size: 48px; line-height: 1; color: #fff; }
-  .clock .l {
-    font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--mute);
-    margin-top: 6px; font-family: var(--head);
-  }
-
   /* JAM ARCHIVE */
   .year { margin-bottom: 56px; }
   .year-head {
@@ -769,7 +720,6 @@ const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
   @media (max-width: 980px) {
     .pub-grid { grid-template-columns: 1fr; gap: 16px; }
     .games { grid-template-columns: 1fr; }
-    .next-jam { grid-template-columns: 1fr; padding: 36px; }
     .year-head { grid-template-columns: 1fr auto; gap: 8px 20px; }
     .year-head .sum { grid-column: 1 / -1; text-align: left; }
     .nav-links { display: none; }
