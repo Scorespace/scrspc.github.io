@@ -1,0 +1,27 @@
+name: Scheduled rebuild
+
+# Rebuilds the site 4x/day so the itch.io jam fetch picks up new jams.
+# Kept separate from deploy.yml: GitHub disables scheduled workflows after
+# 60 days without repo activity, and that must not take push deploys down.
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+
+  keepalive:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/scheduled-rebuild.yml/enable"
+        env:
+          GH_TOKEN: ${{ github.token }}
