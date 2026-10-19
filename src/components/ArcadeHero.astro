@@ -75,6 +75,20 @@ const BASE = import.meta.env.BASE_URL;
   .figure { grid-column: 7 / span 6; display: grid; gap: 4px; }
   .figure :global(.narrow-only) { display: none; }
 
+  /* On a phone the header stays: slimmer, on the page's ground, a hairline under it once the page has scrolled. */
+  @media (max-width: 899px) {
+    .top {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: 64px;
+      background: var(--ground);
+      box-shadow: 0 1px 0 transparent;
+      transition: box-shadow 200ms ease;
+    }
+    :global(html.scrolled) .top { box-shadow: 0 1px 0 var(--rule); }
+  }
+
   @media (max-width: 900px) {
     .hero { min-height: 0; row-gap: 24px; }
     .statement { grid-column: 1 / -1; text-align: center; }
@@ -88,6 +102,11 @@ const BASE = import.meta.env.BASE_URL;
 
 <script>
   import { gsap, onMotion, SplitText } from '../lib/motion';
+
+  // The sticky header's hairline: on once the page has scrolled at all.
+  const mark = () => document.documentElement.classList.toggle('scrolled', scrollY > 4);
+  addEventListener('scroll', mark, { passive: true });
+  mark();
 
   onMotion(() => {
     const split = SplitText.create('.hero .statement', { type: 'words' });

@@ -39,13 +39,13 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
             </article>
             <article class="chapter">
               <p class="no">02 <span>{pillars[1]}</span></p>
-              <p class="num">{brand.jams.stat}</p>
+              <p class="num" data-count={brand.jams.value} data-suffix={brand.jams.suffix}>{brand.jams.stat}</p>
               <p class="text">{brand.jams.label}. {brand.jams.line}.</p>
               <p class="aside">We source early game concepts in volume through our game jam events and developer submissions.</p>
             </article>
             <article class="chapter">
               <p class="no">03 <span>{pillars[2]}</span></p>
-              <p class="num">{brand.publishing.stat}</p>
+              <p class="num long" data-count={Number(brand.publishing.long.replace(/,/g, ''))}>{brand.publishing.long}</p>
               <p class="text">{brand.publishing.label}.</p>
             </article>
           </div>
@@ -117,6 +117,8 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
     color: var(--bright);
     font-variant-numeric: tabular-nums;
   }
+  /* The players in full, 8,000,000: a touch smaller than 4,000+, so it holds one line in the column. */
+  .num.long { font-size: clamp(56px, 9vw, 136px); letter-spacing: -0.04em; }
   .text { margin-top: 18px; max-width: 30ch; color: var(--muted); font-size: 18px; }
   .text.wide { max-width: 44ch; line-height: 1.55; }
   .aside { margin-top: 14px; max-width: 40ch; color: var(--dim); font-size: 15px; }
@@ -167,11 +169,11 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
   .count { margin-left: 10px; color: var(--dim); font-size: 13px; font-variant-numeric: tabular-nums; }
   .count b { color: var(--ink); font-weight: 400; }
 
-  /* On a phone: the field sticks to the top, no taller than a third of the screen, and the chapters pass under it. */
+  /* On a phone with less motion: the field sticks under the header, no taller than a third of the screen, and the chapters pass under it. */
   @media (max-width: 899px) {
     .figure {
       grid-column: 1 / -1;
-      top: 0;
+      top: 64px;
       z-index: 2;
       padding: 8px 0 4px;
       background: var(--ground);
@@ -181,10 +183,29 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
     .copy { grid-column: 1 / -1; grid-row: 2; }
     .chapter { min-height: 56svh; padding: 32px 0; border-top: 1px solid var(--rule); }
   }
+
+  /* On a phone with motion: the story pins under the header, like the desktop's. The field on top, one chapter
+     under it, swapping in place, and the progress bar at the bottom filling as the reader scrolls toward the next. */
+  @media (max-width: 899px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .stage { display: flex; flex-direction: column; align-items: stretch; height: calc(100svh - 64px); padding-bottom: 18px; }
+    :global(.js) .figure { order: -1; position: static; padding: 4px 0 0; box-shadow: none; }
+    :global(.js) .copy { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    :global(.js) .chapters { position: relative; flex: 1; }
+    :global(.js) .chapter { position: absolute; inset: 0; min-height: 0; padding: 12px 0 0; border: 0; justify-content: flex-start; visibility: hidden; }
+    :global(.js) .chapter.on { visibility: visible; }
+    :global(.js) .big { margin-top: 12px; font-size: clamp(24px, 6.4vw, 32px); }
+    :global(.js) .num { margin-top: 10px; font-size: clamp(72px, 22vw, 104px); }
+    :global(.js) .num.long { font-size: clamp(44px, 21vw, 96px); }
+    :global(.js) .text { margin-top: 12px; font-size: 16px; }
+    :global(.js) .progress { display: flex; align-items: center; gap: 8px; }
+    :global(.js) .seg { flex: 1; width: auto; }
+    /* Here the bar is scrubbed: each segment fills with the scroll through its chapter. */
+    :global(.js) .seg i::after { transform: scaleX(var(--fill, 0)); transition: none; }
+  }
 </style>
 
 <script>
-  import { gsap, onMotionOr, ScrollTrigger } from '../lib/motion';
+  import { formatThousands, gsap, onMotionOr, ScrollTrigger } from '../lib/motion';
 
   const chapters = [...document.querySelectorAll<HTMLElement>('.story .chapter')];
   const segs = [...document.querySelectorAll<HTMLButtonElement>('.story .seg')];
@@ -193,9 +214,30 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
   /** The field's shape follows the chapter: 0 creativity, 1 volume, 2 distribution. */
   const shape = (i: number) => host?.hairline?.set(i / 2);
 
+  // A chapter's number counts up from zero as the chapter arrives: to 4,000+, to 8,000,000.
+  const nums = chapters.map((c) => c.querySelector<HTMLElement>('.num[data-count]'));
+  const full = (el: HTMLElement) => formatThousands(Number(el.dataset.count)) + (el.dataset.suffix ?? '');
+  const tally = { v: 0 };
+  function countIn(i: number) {
+    const el = nums[i];
+    if (!el) return;
+    const to = Number(el.dataset.count), suffix = el.dataset.suffix ?? '';
+    gsap.killTweensOf(tally);
+    tally.v = 0;
+    el.textContent = '0' + suffix;
+    gsap.to(tally, { v: to, duration: 1.4, ease: 'out', delay: 0.08, onUpdate: () => { el.textContent = formatThousands(tally.v) + suffix; } });
+  }
+
+  // A phone's address bar showing and hiding should not shift the pin.
+  ScrollTrigger.config({ ignoreMobileResize: true });
+
   const mm = gsap.matchMedia();
   mm.add(
-    { pinned: '(min-width: 900px) and (prefers-reduced-motion: no-preference)', stacked: '(max-width: 899px), (prefers-reduced-motion: reduce)' },
+    {
+      pinned: '(min-width: 900px) and (prefers-reduced-motion: no-preference)',
+      phone: '(max-width: 899px) and (prefers-reduced-motion: no-preference)',
+      stacked: '(prefers-reduced-motion: reduce)',
+    },
     (ctx) => {
       if (ctx.conditions?.stacked) {
         // Each chapter takes over the field as it crosses the middle of the screen, in either direction.
@@ -225,17 +267,23 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
         segs.forEach((s, i) => s.classList.toggle('on', i <= next));
         count.textContent = String(next + 1).padStart(2, '0');
         shape(next);
+        countIn(next);
         current = next;
       }
 
       // No snapping: the page only moves when the reader scrolls. Each chapter holds for a full screen of
-      // scrolling, the pin split into equal thirds.
+      // scrolling, the pin split into equal thirds. On a phone the pin sits under the sticky header, and the
+      // progress bar fills with the scroll, so the next change can be seen coming.
+      const phone = !!ctx.conditions?.phone, header = phone ? (document.querySelector<HTMLElement>('.top')?.offsetHeight ?? 0) : 0;
       const st = ScrollTrigger.create({
         trigger: '.story',
-        start: 'top top',
+        start: `top ${header}px`,
         end: '+=300%',
         pin: '.stage',
-        onUpdate: (self) => show(Math.min(2, Math.floor(self.progress * 3))),
+        onUpdate: (self) => {
+          show(Math.min(2, Math.floor(self.progress * 3)));
+          if (phone) segs.forEach((s, i) => s.style.setProperty('--fill', String(Math.min(1, Math.max(0, self.progress * 3 - i)))));
+        },
       });
       // A segment takes the reader to the middle of its chapter's third.
       segs.forEach((s, i) => s.addEventListener('click', () => {
@@ -244,6 +292,9 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
 
       return () => {
         chapters.forEach((c, i) => { c.classList.toggle('on', i === 0); gsap.set(c, { clearProps: 'all' }); });
+        segs.forEach((s) => s.style.removeProperty('--fill'));
+        gsap.killTweensOf(tally);
+        nums.forEach((el) => { if (el) el.textContent = full(el); });
         shape(0);
       };
     },
@@ -259,8 +310,6 @@ import { brand, pillars, studioDescription, title } from '../data/brand';
           scrollTrigger: { trigger: el, start: 'top 92%', once: true },
         });
       });
-      if (matchMedia('(min-width: 900px)').matches) return;
-      chapters.forEach((c) => gsap.from(c.children, { autoAlpha: 0, y: 14, duration: 0.6, ease: 'out', stagger: 0.05, scrollTrigger: { trigger: c, start: 'top 85%', once: true } }));
     },
     () => {},
   );

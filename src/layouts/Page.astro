@@ -69,6 +69,11 @@ const { title, description, heading, subtitle } = Astro.props;
 <script>
   import { gsap, onMotion } from '../lib/motion';
 
+  // The sticky header's hairline: on once the page has scrolled at all.
+  const mark = () => document.documentElement.classList.toggle('scrolled', scrollY > 4);
+  addEventListener('scroll', mark, { passive: true });
+  mark();
+
   // The page settles in: the header, the title, then what follows, 60ms apart.
   onMotion(() => {
     gsap.from('.soft-top, .page-head, .page > :not(.page-head)', {
