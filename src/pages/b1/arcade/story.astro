@@ -231,16 +231,18 @@ import { brand, pillars, studioDescription, title } from '../../../data/brand';
         current = next;
       }
 
+      // No snapping: the page only moves when the reader scrolls. Each chapter holds for a full screen of
+      // scrolling, the pin split into equal thirds.
       const st = ScrollTrigger.create({
         trigger: '.story',
         start: 'top top',
-        end: '+=200%',
+        end: '+=300%',
         pin: '.stage',
-        snap: { snapTo: [0, 0.5, 1], duration: { min: 0.2, max: 0.5 }, ease: 'inOut', delay: 0.08 },
-        onUpdate: (self) => show(Math.round(self.progress * 2)),
+        onUpdate: (self) => show(Math.min(2, Math.floor(self.progress * 3))),
       });
+      // A segment takes the reader to the middle of its chapter's third.
       segs.forEach((s, i) => s.addEventListener('click', () => {
-        window.scrollTo({ top: st.start + (st.end - st.start) * (i / 2), behavior: 'smooth' });
+        window.scrollTo({ top: st.start + (st.end - st.start) * ((i + 0.5) / 3), behavior: 'smooth' });
       }));
 
       return () => {
