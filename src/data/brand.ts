@@ -13,6 +13,9 @@ export const brand = {
     suffix: 'M',
     long: '8,000,000',
     label: 'players across all platforms',
+    // The Distribution slide: how we publish.
+    approach:
+      'We take a platform agnostic approach to publishing while also tailoring each signed title for the target platform.',
   },
   jams: {
     line: "We've been running game jams since 2019",
@@ -21,6 +24,10 @@ export const brand = {
     value: 4000,
     suffix: '+',
     label: 'games submitted all time',
+    // The Volume slide: what the number counts, then why volume works.
+    detail: 'games submitted all time to our game jam events since 2019',
+    filter:
+      'Competition is the best filter for a high volume of games. The most talented developers rise to the top. This allows us to have a volume led approach while also being intentional about the quality bar for our signed titles.',
   },
   belief: {
     lead: 'We believe that data should inform iteration, not ideation.',

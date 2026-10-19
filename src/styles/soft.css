@@ -1,32 +1,45 @@
 /*
- * The site's palette, shared by the homepage and the other pages. Dusk charcoal, Lexend, one
- * lavender accent, rounded everything. Motion values follow Emil Kowalski's
- * rules: strong custom ease-out, presses at 0.97, hovers only where a hover
- * really exists.
+ * The site's palette and type, shared by the homepage and the other pages. Slate (a dark blue-grey leaning
+ * toward indigo), Lexend, one soft indigo-periwinkle accent, rounded everything. Motion values follow Emil Kowalski's
+ * rules: strong custom ease-out, presses at 0.97, hovers only where a hover really exists.
  */
 :root {
   color-scheme: dark;
-  --ground: #1c1b22;
-  --raised: #222129;
-  --ink: #e4e2ec;
-  --bright: #f7f6fb;
-  --muted: #9a97a8;
-  --dim: #6c6979;
+  --ground: #181b2c;
+  --raised: #1e2236;
+  --ink: #e3e5f2;
+  --bright: #f6f7fd;
+  --muted: #989db9;
+  --dim: #696e8b;
   --rule: rgba(255, 255, 255, 0.07);
   --wash: rgba(255, 255, 255, 0.045);
   --wash-2: rgba(255, 255, 255, 0.08);
   --edge: rgba(255, 255, 255, 0.06);
-  --accent: #bba9ff;
-  --accent-ink: #19152b;
+  --accent: #a9b0ff;
+  --accent-hover: #bdc3ff;
+  --accent-ink: #12153a;
+  /* The logo's two colours, for small, deliberate touches. */
+  --brand-violet: #6c00fc;
+  --brand-cyan: #00c0fc;
   --pad: clamp(18px, 3vw, 44px);
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --hairline-plate: var(--ground);
-  --hairline-hi: #f4f2fb;
-  --hairline-edge: #a29eb6;
-  --hairline-mid: #5d5a6c;
-  --hairline-lo: #3b3946;
+  --hairline-hi: #f3f4fd;
+  --hairline-edge: #9da2c3;
+  --hairline-mid: #585d7f;
+  --hairline-lo: #373b58;
   --hl-read: var(--dim);
+  /* Type in three roles: the body, the display face (the tagline and page titles), and the small labels. */
+  --font-body: 'Lexend', system-ui, sans-serif;
+  --font-display: var(--font-body);
+  --display-weight: 700;
+  --display-tracking: -0.03em;
+  --display-scale: 1;
+  --font-label: var(--font-body);
+  --label-weight: 400;
+  /* The colour for signals: the slide numbers and the progress bar. */
+  --signal: var(--brand-cyan);
 }
 
 * { box-sizing: border-box; }
@@ -34,7 +47,7 @@ html { background: var(--ground); }
 body {
   margin: 0;
   color: var(--ink);
-  font: 300 15px/1.55 'Lexend', system-ui, sans-serif;
+  font: 300 15px/1.55 var(--font-body);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }
@@ -61,7 +74,7 @@ p { margin: 0; }
   height: 80px;
   padding: 0 var(--pad);
 }
-.soft-logo img { display: block; height: 34px; width: auto; }
+.soft-logo img { display: block; height: 40px; width: auto; }
 /* On a phone the header stays: slimmer, on the page's ground, a hairline under it once the page has scrolled. */
 @media (max-width: 899px) {
   .soft-top {
@@ -101,7 +114,7 @@ p { margin: 0; }
 
 @media (hover: hover) and (pointer: fine) {
   .pill:hover { background: var(--wash-2); color: var(--bright); }
-  .pill.solid:hover { background: #c9baff; color: var(--accent-ink); }
+  .pill.solid:hover { background: var(--accent-hover); color: var(--accent-ink); }
   a:hover .arrow { transform: translate(2px, -2px); }
   a:hover .arrow.right { transform: translateX(3px); }
 }

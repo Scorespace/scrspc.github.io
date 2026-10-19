@@ -29,28 +29,31 @@ const LIT_RUNS = runs(true), DARK_RUNS = runs(false), FRONT = SIDE.slice(5, 39);
 const L = Math.hypot(9, 36), SCREEN = rrect(2.5, 3, CW - 2.5, L - 3, 2.6, 3);
 const zTop = (y) => 46 + (D + 7 - y) * 0.4;
 
-/** The games on a 10 × 9 grid of dots, y up from the bottom: step() on each beat, at(x, y) is 2 bright, 1 medium, 0 off. */
+/** The games on a 10 × 9 grid of dots, y up from the bottom: step() on each beat, at(x, y) is 2 bright, 1 medium, 0 off.
+ * Each step leaves its moment in fx (null for none): breakout "jolt", tetris "thud" or "land", snake "hop" or "crash". */
 function makeGames(rand) {
   const box = (x, y) => x >= 0 && x < GC && y >= 0 && y < GR, eq = (p, x, y) => p && p[0] === x && p[1] === y;
-  // Breakout: three rows of five two-dot bricks. A brick the ball strikes flashes for a beat, then is gone.
+  // Breakout: three rows of five two-dot bricks. A brick the ball strikes flashes for a beat, then is gone, and a ring
+  // of sparks flies out of it; the ball leaves a trail of one dot.
   const breakout = () => {
-    let bricks, b, v, pad, hit, wait;
+    let bricks, b, v, pad, hit, wait, tr, sp, sa;
     const brick = (x, y) => (y >= GR - 3 && box(x, y) ? (GR - 1 - y) * 5 + (x >> 1) : -1);
-    const reset = () => { bricks = new Set([...Array(15).keys()]); b = [4, 1]; v = [1, 1]; pad = 3; hit = -1; wait = 0; }; reset();
-    return { step() {
-      hit = -1;
+    const reset = () => { bricks = new Set([...Array(15).keys()]); b = [4, 1]; v = [1, 1]; pad = 3; hit = -1; wait = 0; tr = sp = null; }; reset();
+    return { fx: null, step() {
+      hit = -1; this.fx = null; tr = b; if (sp && ++sa > 2) sp = null;
       if (wait) { if (--wait === 0) reset(); return; }
       let [x, y] = b, [vx, vy] = v;
       if (!box(x + vx, 0)) vx = -vx;
       if (y + vy >= GR) vy = -vy;
       const k = brick(x + vx, y + vy);
-      if (bricks.has(k)) { bricks.delete(k); hit = k; vy = -vy; if (!bricks.size) wait = 5; }
+      if (bricks.has(k)) { bricks.delete(k); hit = k; sp = [x + vx, y + vy]; sa = 1; this.fx = "jolt"; vy = -vy; if (!bricks.size) wait = 5; }
       else if (y + vy === 0 && x + vx >= pad - 1 && x + vx <= pad + 3) { vy = 1; vx = x + vx < pad + 1 ? -1 : x + vx > pad + 1 ? 1 : vx; }
       else if (y + vy < 0) return reset();
       else { x += vx; y += vy; }
       b = [x, y]; v = [vx, vy];
       pad = Math.max(0, Math.min(GC - 3, pad + Math.sign(x + vx - pad - 1)));
-    }, at: (x, y) => { const k = brick(x, y); return eq(b, x, y) || (k >= 0 && k === hit) ? 2 : bricks.has(k) || (y === 0 && x >= pad && x <= pad + 2) ? 1 : 0; } };
+    }, at: (x, y) => { const k = brick(x, y), spark = sp && !bricks.has(k) && Math.max(Math.abs(x - sp[0]), Math.abs(y - sp[1])) === sa;
+      return eq(b, x, y) || (k >= 0 && k === hit) || spark ? 2 : bricks.has(k) || eq(tr, x, y) || (y === 0 && x >= pad && x <= pad + 2) ? 1 : 0; } };
   };
   // Tetris: a six-wide well between two walls. Each piece slides to where a simple player would put it, and drops.
   const tetris = () => {
@@ -75,37 +78,39 @@ function makeGames(rand) {
       if (!fits(cells, px, py)) well.fill(0);
     }
     const reset = () => { well = Array(WW * GR).fill(0); full = []; spawn(); }; reset();
-    return { step() {
+    return { fx: null, step() { this.fx = null;
       if (full.length) { full.sort((a, c) => c - a).forEach((r) => { well.splice(r * WW, WW); well.push(...Array(WW).fill(0)); }); full = []; return; }
       if (px !== tx && fits(cells, px + Math.sign(tx - px), py)) px += Math.sign(tx - px);
       if (fits(cells, px, py - 1)) { py--; return; }
       cells.forEach(([u, v]) => { if (py + v < GR) well[(py + v) * WW + px + u] = 1; });
       for (let j = 0; j < GR; j++) if (row(well, j)) full.push(j);
-      spawn();
-    }, at: (x, y) => {
-      const u = x - L0;
-      if (u === -1 || u === WW) return 1;
-      if (u < 0 || u > WW) return 0;
+      this.fx = full.length ? "thud" : "land"; spawn();
+    }, at: (x, y) => { const u = x - L0; if (u === -1 || u === WW) return 1; if (u < 0 || u > WW) return 0;
       return cells.some(([a, c]) => px + a === u && py + c === y) || (well[y * WW + u] && full.includes(y)) ? 2 : well[y * WW + u] ? 1 : 0;
     } };
   };
-  // Snake: it steers for the pellet, grows when it eats, and starts over when it boxes itself in.
+  // Snake: it steers for the pellet, grows when it eats, and starts over when it boxes itself in. Eating sends a ring
+  // out from its head; boxing itself in is three beats of static before it starts again.
   const snake = () => {
-    let body, dir, food;
+    let body, dir, food, ring, rr, noise = 0;
     const on = (x, y) => body.some((q) => eq(q, x, y));
     const feed = () => { do food = [rand(GC), rand(GR)]; while (on(...food)); };
-    const reset = () => { body = [[3, 4], [2, 4], [1, 4]]; dir = 0; feed(); }; reset();
-    return { step() {
+    const reset = () => { body = [[3, 4], [2, 4], [1, 4]]; dir = 0; ring = null; feed(); }; reset();
+    return { fx: null, step() { this.fx = null;
+      if (noise) { if (--noise === 0) reset(); return; } if (ring && ++rr > 3) ring = null;
       const h = body[0], M = [[1, 0], [0, 1], [-1, 0], [0, -1]], far = (o) => Math.abs(o[1] - food[0]) + Math.abs(o[2] - food[1]);
       const o = [dir, (dir + 1) % 4, (dir + 3) % 4].map((k) => [k, h[0] + M[k][0], h[1] + M[k][1]]).filter(([, x, y]) => box(x, y) && !on(x, y));
-      if (!o.length) return reset();
+      if (!o.length) { noise = 3; this.fx = "crash"; return; }
       o.sort((a, c) => far(a) - far(c));
       dir = o[0][0]; body.unshift([o[0][1], o[0][2]]);
-      if (eq(food, ...body[0])) { if (body.length > 12) body.length = 3; feed(); } else body.pop();
-    }, at: (x, y) => (eq(body[0], x, y) ? 2 : on(x, y) || eq(food, x, y) ? 1 : 0) };
+      if (eq(food, ...body[0])) { if (body.length > 12) body.length = 3; feed(); ring = body[0]; rr = 1; this.fx = "hop"; } else body.pop();
+    }, at: (x, y) => (noise ? (rand(4) ? 0 : 1) : eq(body[0], x, y) ? 2 : on(x, y) || eq(food, x, y) ? 1
+      : ring && Math.max(Math.abs(x - ring[0]), Math.abs(y - ring[1])) === rr ? 2 : 0) };
   };
   return [breakout(), tetris(), snake()];
 }
+// The marquee lights' pattern for each game while a score's beats last: a chase, a flash, alternating pairs.
+const BLINK = [(k, b, n) => k === b % n, (k, b) => b % 2 === 0, (k, b) => (k + b) % 2 === 0];
 
 function mount({ stage, svg, read }, value) {
   const bag = disposer();
@@ -127,8 +132,7 @@ function mount({ stage, svg, read }, value) {
   const y = tween(0);
   let drawn = NaN;
   function draw(dy) {
-    if (dy === drawn) return;
-    drawn = dy;
+    if (dy === drawn) return; drawn = dy;
     const b = a + CW, m = a + CW / 2, W = (x, yy, z) => P(x, yy + dy, z), at = (x, pts) => pts.map(([yy, z]) => W(x, yy, z));
     const along = ([yy, z]) => seg(W(a, yy, z), W(b, yy, z)), onScreen = (u, v) => W(a + u, D - 3 - 9 * (v / L), 50 + 36 * (v / L));
     PIECES.forEach((pc, k) => c.fills[k].setAttribute("d", poly(hull(at(a, pc).concat(at(b, pc))))));
@@ -145,19 +149,25 @@ function mount({ stage, svg, read }, value) {
     cells.forEach((t, k) => place(t.el, onScreen(4 + (k % GC) * 3.55, 4.6 + ((k / GC) | 0) * 3.62)));
     counter.forEach((d, k) => place(d, W(m + (k - 1) * 5, D - 6, 94)));
   }
-  let cur = 0, held = false, clock = 0, acc = 0, noise = 0;
+  let cur = 0, held = false, clock = 0, acc = 0, noise = 0, blink = 0;
   /** The screen: the current game, or a few beats of static between games. */
   const paint = () => cells.forEach((t, k) => {
     const v = noise ? (rand(4) ? 0 : 1) : games[cur].at(k % GC, (k / GC) | 0), cls = v === 2 ? "dot" : v ? "dot m" : "dot off";
     if (cls !== t.cls) { t.el.setAttribute("class", cls); t.cls = cls; }
   });
-  const count = () => counter.forEach((d, k) => d.setAttribute("class", k === cur ? "dot m" : "dot off"));
+  // The marquee's three dots count which game is on; while a score's beats last they blink in its pattern.
+  const count = () => { g.setAttribute("data-game", NAMES[cur]); counter.forEach((d, k) => d.setAttribute("class", blink > 0 ? (BLINK[cur](k, blink, 3) ? "dot" : "dot off") : k === cur ? "dot m" : "dot off")); };
+  /** A game's moment: the marquee blinks for six beats, and the page hears of it. */
+  function score(fx) {
+    if (blink > 0) blink--; if (fx) { if (fx !== "land") blink = 6; stage.dispatchEvent(new CustomEvent("arcade", { bubbles: true, detail: { game: NAMES[cur], fx } })); }
+    count();
+  }
   count(); paint();
   const B = register(stage, (dt, now) => {
     draw(tval(y, now));
     if (reducedMotion()) return !tdone(y, now);
-    if (!held && (clock += dt) >= HOLD) { clock = 0; cur = (cur + 1) % NAMES.length; noise = 3; count(); }
-    for (acc += dt; acc >= 1 / RATES[cur]; acc -= 1 / RATES[cur]) { if (noise) noise--; else games[cur].step(); paint(); }
+    if (!held && (clock += dt) >= HOLD) { clock = 0; cur = (cur + 1) % NAMES.length; noise = 3; blink = 0; count(); }
+    for (acc += dt; acc >= 1 / RATES[cur]; acc -= 1 / RATES[cur]) { if (noise) noise--; else { games[cur].step(); score(games[cur].fx); } paint(); }
     return true;
   });
   bag.add(B.unregister);

@@ -46,7 +46,7 @@ const BASE = import.meta.env.BASE_URL;
     height: 80px;
     padding: 0 var(--pad);
   }
-  .logo img { display: block; height: 34px; width: auto; }
+  .logo img { display: block; height: 40px; width: auto; }
 
   .hero {
     display: grid;
@@ -64,16 +64,21 @@ const BASE = import.meta.env.BASE_URL;
   .statement {
     grid-column: 1 / span 6;
     margin: 0;
-    font-weight: 700;
-    font-size: clamp(36px, 4.4vw, 68px);
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: calc(clamp(36px, 4.4vw, 68px) * var(--display-scale));
     line-height: 1.08;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--display-tracking);
     color: var(--bright);
     text-wrap: balance;
   }
   .statement .soft { color: var(--muted); }
   .figure { grid-column: 7 / span 6; display: grid; gap: 4px; }
   .figure :global(.narrow-only) { display: none; }
+  /* Each game in its own brand colour: its bright dots, its lit screen, its sparks and marquee lights. */
+  .figure :global(g[data-game='breakout']) { --hl-hi: var(--brand-cyan); }
+  .figure :global(g[data-game='tetris']) { --hl-hi: #8f4dff; }
+  .figure :global(g[data-game='snake']) { --hl-hi: #3f7dff; }
 
   /* On a phone the header stays: slimmer, on the page's ground, a hairline under it once the page has scrolled. */
   @media (max-width: 899px) {
@@ -107,6 +112,34 @@ const BASE = import.meta.env.BASE_URL;
   const mark = () => document.documentElement.classList.toggle('scrolled', scrollY > 4);
   addEventListener('scroll', mark, { passive: true });
   mark();
+
+  // Screen shake: each game's moments jolt its own cabinet, subtly: about 1.5 units of the figure, a couple of pixels.
+  const amp = 1.5;
+  const shakes: Record<string, (g: SVGGElement, a: number) => gsap.core.Timeline> = {
+    // Breakout: a quick sideways jolt as a brick breaks.
+    jolt: (g, a) => gsap.timeline().to(g, { x: a, duration: 0.05, ease: 'none' }).to(g, { x: -a * 0.7, duration: 0.05, ease: 'none' }).to(g, { x: 0, duration: 0.1, ease: 'out' }),
+    // Tetris: a line clears with a downward thud and a bounce back; a piece landing is a small nudge.
+    thud: (g, a) => gsap.timeline().to(g, { y: a, duration: 0.06, ease: 'none' }).to(g, { y: 0, duration: 0.45, ease: 'back.out(3)' }),
+    land: (g, a) => gsap.timeline().to(g, { y: a * 0.3, duration: 0.05, ease: 'none' }).to(g, { y: 0, duration: 0.16, ease: 'out' }),
+    // Snake: eating is a little hop; crashing is a rattle that settles.
+    hop: (g, a) => gsap.timeline().to(g, { y: -a, duration: 0.1, ease: 'out' }).to(g, { y: 0, duration: 0.35, ease: 'bounce.out' }),
+    crash: (g, a) => {
+      const tl = gsap.timeline();
+      for (let i = 0; i < 6; i++) tl.to(g, { x: gsap.utils.random(-2 * a, 2 * a), y: gsap.utils.random(-2 * a, 2 * a), duration: 0.045, ease: 'none' });
+      return tl.to(g, { x: 0, y: 0, duration: 0.08, ease: 'out' });
+    },
+  };
+  onMotion(() => {
+    const shake = (e: Event) => {
+      const { game, fx } = (e as CustomEvent<{ game: string; fx: string }>).detail;
+      const g = (e.target as Element).querySelector<SVGGElement>(`svg g[data-game="${game}"]`);
+      if (!g || !shakes[fx]) return;
+      gsap.killTweensOf(g);
+      shakes[fx](g, amp);
+    };
+    document.addEventListener('arcade', shake);
+    return () => document.removeEventListener('arcade', shake);
+  });
 
   onMotion(() => {
     const split = SplitText.create('.hero .statement', { type: 'words' });

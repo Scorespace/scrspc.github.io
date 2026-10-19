@@ -1,5 +1,6 @@
 ---
-// Events: one lavender band out to Jamzo, where every upcoming event lives.
+// Events: one lavender band out to Jamzo, where every upcoming event lives. Wide diagonal stripes, as on
+// Jamzo's own panels, slide slowly across it toward the button, and quicker while the band is hovered.
 import { brand } from '../data/brand';
 ---
 
@@ -14,17 +15,22 @@ import { brand } from '../data/brand';
 <style>
   .events { padding: clamp(40px, 8vh, 88px) var(--pad) 8px; }
   .band {
+    /* One tile of 45° stripes, 24px on and 24px off: a square of side 48·√2 holds exactly two, so the
+       tiles meet without a seam, and sliding the pattern one tile across loops without a jump. */
+    --tile: 67.882px;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
     column-gap: 24px;
     padding: 26px 26px 26px 32px;
     border-radius: 28px;
-    background: var(--accent);
+    background-color: var(--accent);
+    background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.16) 0 24px, rgba(255, 255, 255, 0) 24px 48px);
+    background-size: var(--tile) var(--tile);
     color: var(--accent-ink);
     transition: background-color 200ms ease;
   }
-  .kicker { grid-column: 1; color: rgba(25, 21, 43, 0.6); font-size: 13px; font-weight: 400; }
+  .kicker { grid-column: 1; color: color-mix(in srgb, var(--accent-ink) 60%, transparent); font-family: var(--font-label); font-size: 13px; font-weight: var(--label-weight); }
   .line {
     grid-column: 1;
     margin-top: 6px;
@@ -48,7 +54,7 @@ import { brand } from '../data/brand';
   }
   .band:active .go { scale: 0.94; }
   @media (hover: hover) and (pointer: fine) {
-    .band:hover { background: #c9baff; }
+    .band:hover { background-color: var(--accent-hover); }
     .band:hover .arrow { transform: translate(3px, -3px); }
   }
   @media (max-width: 760px) {
@@ -56,3 +62,32 @@ import { brand } from '../data/brand';
     .go { width: 56px; height: 56px; font-size: 22px; }
   }
 </style>
+
+<script>
+  import { gsap, onMotionOr } from '../lib/motion';
+
+  const band = document.querySelector<HTMLElement>('.events .band');
+  if (band) {
+    onMotionOr(
+      () => {
+        // The stripes slide right, one tile every 3s (about 23px a second), round and round.
+        const tile = parseFloat(getComputedStyle(band).getPropertyValue('--tile')) || 67.882;
+        const loop = gsap.fromTo(band, { backgroundPosition: '0px 0px' }, { backgroundPosition: `${tile}px 0px`, duration: 3, ease: 'none', repeat: -1 });
+        const fast = () => gsap.to(loop, { timeScale: 3, duration: 0.4, ease: 'out', overwrite: true });
+        const slow = () => gsap.to(loop, { timeScale: 1, duration: 0.6, ease: 'out', overwrite: true });
+        const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (fine) {
+          band.addEventListener('pointerenter', fast);
+          band.addEventListener('pointerleave', slow);
+        }
+        return () => {
+          loop.kill();
+          gsap.set(band, { clearProps: 'backgroundPosition' });
+          band.removeEventListener('pointerenter', fast);
+          band.removeEventListener('pointerleave', slow);
+        };
+      },
+      () => {},
+    );
+  }
+</script>

@@ -1,0 +1,149 @@
+---
+// The arcade dot field: a fixed grid of tiny dots behind the whole page, like the cabinets' screens. Their
+// brightness drifts on slow noise; the pointer (or a finger) softly lights the dots near it, and a click or
+// tap sends a ripple through them. On the homepage it is strongest over the hero and quietens as the reader scrolls; on the
+// other pages it stays quiet behind the text. With less motion it is one still frame.
+interface Props {
+  hero?: boolean;
+}
+
+const { hero = false } = Astro.props;
+---
+
+<canvas class="dot-field" data-hero={hero ? '' : undefined} aria-hidden="true"></canvas>
+
+<style>
+  .dot-field {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>('canvas.dot-field');
+  const ctx = canvas?.getContext('2d');
+
+  if (canvas && ctx) {
+    const hero = canvas.hasAttribute('data-hero');
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const css = getComputedStyle(document.documentElement);
+    const INK = css.getPropertyValue('--ink').trim() || '#e3e5f2';
+    // Alpha steps each drawn as one batch; the brightest a dot gets; the pointer's glow radius; a ripple's band,
+    // speed and life.
+    const LEVELS = 24, TOP = 0.6, GLOW = 90, RING = 26, SPEED = 420, LIFE = 1.2, DOT = 1.2;
+
+    // A small 2-D Perlin noise: a shuffled table, four corner gradients, blended on an eased curve.
+    const perm = new Uint8Array(512);
+    {
+      const p = Array.from({ length: 256 }, (_, i) => i);
+      let seed = 7;
+      for (let i = 255; i > 0; i--) {
+        seed = (seed * 16807) % 2147483647;
+        const j = seed % (i + 1);
+        [p[i], p[j]] = [p[j], p[i]];
+      }
+      for (let i = 0; i < 512; i++) perm[i] = p[i & 255];
+    }
+    const fade = (t: number) => t * t * t * (t * (t * 6 - 15) + 10);
+    const grad = (h: number, x: number, y: number) => (h & 1 ? x : -x) + (h & 2 ? y : -y);
+    function noise(x: number, y: number) {
+      const fx = Math.floor(x), fy = Math.floor(y), X = fx & 255, Y = fy & 255, xf = x - fx, yf = y - fy;
+      const u = fade(xf), v = fade(yf), a = perm[X] + Y, b = perm[X + 1] + Y;
+      const top = grad(perm[a], xf, yf) + u * (grad(perm[b], xf - 1, yf) - grad(perm[a], xf, yf));
+      const bottom = grad(perm[a + 1], xf, yf - 1) + u * (grad(perm[b + 1], xf - 1, yf - 1) - grad(perm[a + 1], xf, yf - 1));
+      return top + v * (bottom - top);
+    }
+
+    let W = 0, H = 0, gap = 14, cols = 0, rows = 0;
+    function size() {
+      const dpr = Math.min(2, devicePixelRatio || 1);
+      W = innerWidth;
+      H = innerHeight;
+      gap = W <= 760 ? 15 : 18;
+      canvas!.width = Math.round(W * dpr);
+      canvas!.height = Math.round(H * dpr);
+      ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(W / gap) + 1;
+      rows = Math.ceil(H / gap) + 1;
+    }
+
+    // The pointer: a soft glow that eases in and out where it is; a ripple only on a click or tap.
+    const ripples: { x: number; y: number; t: number; k: number }[] = [];
+    let px = -1e4, py = -1e4, glow = 0, glowTo = 0;
+    const ripple = (x: number, y: number, k: number) => {
+      ripples.push({ x, y, t: performance.now() / 1000, k });
+      if (ripples.length > 12) ripples.shift();
+    };
+    function moved(x: number, y: number) {
+      px = x;
+      py = y;
+      glowTo = 1;
+    }
+
+    // Dots sorted into alpha steps, so each step is one batch; all in the ink grey.
+    const buckets = Array.from({ length: LEVELS }, () => [] as number[]);
+    function draw(now: number, live: boolean) {
+      const t = now / 1000;
+      glow += (glowTo - glow) * 0.08;
+      while (ripples.length && t - ripples[0].t > LIFE) ripples.shift();
+      const strength = hero ? 1 - 0.58 * Math.min(1, scrollY / (H * 0.9)) : 0.3, touch = Math.max(strength, 0.6);
+      for (const list of buckets) list.length = 0;
+      const f = 0.0042, dx = t * 0.05, dy = t * 0.035;
+      for (let j = 0; j < rows; j++) {
+        const y = j * gap;
+        for (let i = 0; i < cols; i++) {
+          const x = i * gap;
+          // The drift: two octaves of noise, most of it held near off so bright bands pass through a faint grid.
+          let n = (noise(x * f + dx, y * f - dy) * 0.7 + noise(x * f * 2.3 - dy, y * f * 2.3 + dx) * 0.3 + 1) / 2;
+          n = n < 0.48 ? 0 : (n - 0.48) / 0.52;
+          const drift = (0.04 + 0.25 * n * n * (3 - 2 * n)) * strength;
+          let lit = 0;
+          if (live) {
+            if (glow > 0.01) {
+              const ex = x - px, ey = y - py, d = Math.sqrt(ex * ex + ey * ey);
+              if (d < GLOW) { const k = 1 - d / GLOW; lit += k * k * glow * 0.5; }
+            }
+            for (const r of ripples) {
+              const age = t - r.t, ex = x - r.x, ey = y - r.y, off = Math.abs(Math.sqrt(ex * ex + ey * ey) - age * SPEED);
+              if (off < RING) lit += (1 - off / RING) * (1 - age / LIFE) * r.k;
+            }
+            lit *= 0.55 * touch;
+          }
+          const level = Math.round((Math.min(TOP, drift + lit) / TOP) * (LEVELS - 1));
+          if (level > 0) buckets[level].push(x, y);
+        }
+      }
+      ctx!.clearRect(0, 0, W, H);
+      ctx!.fillStyle = INK;
+      buckets.forEach((list, level) => {
+        if (!list.length) return;
+        ctx!.globalAlpha = (level / (LEVELS - 1)) * TOP;
+        for (let k = 0; k < list.length; k += 2) ctx!.fillRect(list[k] - DOT / 2, list[k + 1] - DOT / 2, DOT, DOT);
+      });
+      ctx!.globalAlpha = 1;
+    }
+
+    let raf = 0;
+    const loop = (now: number) => { draw(now, true); raf = requestAnimationFrame(loop); };
+    // With less motion: one still frame, drawn again only when the window changes size.
+    function start() {
+      cancelAnimationFrame(raf);
+      size();
+      if (still.matches) draw(0, false);
+      else raf = requestAnimationFrame(loop);
+    }
+    addEventListener('resize', () => { size(); if (still.matches) draw(0, false); }, { passive: true });
+    still.addEventListener('change', start);
+    addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') moved(e.clientX, e.clientY); }, { passive: true });
+    addEventListener('pointerdown', (e) => ripple(e.clientX, e.clientY, 0.8), { passive: true });
+    addEventListener('touchmove', (e) => { const t = e.touches[0]; if (t) moved(t.clientX, t.clientY); }, { passive: true });
+    addEventListener('touchend', () => { glowTo = 0; }, { passive: true });
+    document.documentElement.addEventListener('mouseleave', () => { glowTo = 0; });
+    start();
+  }
+</script>

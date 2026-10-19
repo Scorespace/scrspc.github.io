@@ -53,13 +53,13 @@ const where: Record<string, string> = { discord: 'Discord', itch: 'itch.io', ste
     border-bottom: 1px solid var(--rule);
     margin-bottom: 14px;
   }
-  .kicker { color: var(--muted); font-size: 14px; font-weight: 400; }
-  .count { color: var(--dim); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .kicker { color: var(--muted); font-family: var(--font-label); font-size: 14px; font-weight: var(--label-weight); }
+  .count { color: var(--dim); font-family: var(--font-label); font-size: 14px; font-variant-numeric: tabular-nums; }
 
   .list { display: grid; gap: 10px; }
   .game {
     border-radius: 24px;
-    background: var(--wash);
+    background: color-mix(in srgb, var(--ground), white 4.5%);
     box-shadow: inset 0 0 0 1px var(--edge);
     interpolate-size: allow-keywords;
   }
@@ -90,8 +90,9 @@ const where: Record<string, string> = { discord: 'Discord', itch: 'itch.io', ste
     border-radius: 999px;
     background: var(--wash-2);
     color: var(--ink);
+    font-family: var(--font-label);
     font-size: 14px;
-    font-weight: 400;
+    font-weight: var(--label-weight);
     white-space: nowrap;
   }
   /* A plus that turns into a minus: two strokes, one of them rotating flat. */
