@@ -4,7 +4,7 @@
 
 export const brand = {
   name: 'ScoreSpace',
-  tagline: 'ScoreSpace is a game studio powered by game jams!',
+  tagline: 'ScoreSpace is a game studio powered by game jams',
   logo: 'logo.png',
   statement:
     'ScoreSpace sources early game concepts in volume through its game jam events and developer submissions.',
