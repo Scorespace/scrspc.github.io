@@ -2,7 +2,7 @@
 
 export const brand = {
   name: 'ScoreSpace',
-  tagline: 'ScoreSpace is a game studio powered by game jams',
+  tagline: 'ScoreSpace is a vertically integrated game studio',
   logo: 'logo.png',
   statement:
     'ScoreSpace sources early game concepts in volume through its game jam events and developer submissions.',
@@ -55,6 +55,6 @@ export const brand = {
 // The three ideas the arcade story walks through, in order.
 export const pillars = ['Creativity', 'Volume', 'Distribution'] as const;
 
-export const title = 'ScoreSpace - A game studio powered by game jams';
+export const title = 'ScoreSpace - A vertically integrated game studio';
 // The homepage leads with the tagline; the statement follows it in search results.
 export const studioDescription = `${brand.tagline}${/[.!?]$/.test(brand.tagline) ? '' : '.'} ${brand.statement}`;
