@@ -1,17 +1,25 @@
 ---
 // Featured games, as an accordion: one row per showcased game, its name and platform up front,
 // opening to a line about it and a way to play. Built on <details>, so it works
-// without JS and from the keyboard; only one row is open at a time.
+// without JS and from the keyboard; only one row is open at a time. The homepage shows the
+// showcased games; /games/ shows them all, flush in its page.
 import { games } from '../data/games';
 
-const list = games.filter((g) => g.showcase);
+interface Props {
+  all?: boolean;
+  label?: string;
+  flush?: boolean;
+}
+
+const { all = false, label = 'Featured Games', flush = false } = Astro.props;
+const list = all ? games : games.filter((g) => g.showcase);
 const platform: Record<string, string> = { discord: 'Discord', itch: 'itch.io', steam: 'Steam', web: 'the web', reddit: 'Reddit' };
 const where: Record<string, string> = { discord: 'Discord', itch: 'itch.io', steam: 'Steam', web: 'Web', reddit: 'Reddit' };
 ---
 
-<section class="games" aria-labelledby="games-title">
+<section class:list={['games', { flush }]} aria-labelledby="games-title">
   <header class="head" data-reveal>
-    <p class="kicker" id="games-title">Featured Games</p>
+    <p class="kicker" id="games-title">{label}</p>
     <p class="count">{String(list.length).padStart(2, '0')}</p>
   </header>
   <div class="list">
@@ -36,6 +44,7 @@ const where: Record<string, string> = { discord: 'Discord', itch: 'itch.io', ste
 
 <style>
   .games { padding: clamp(48px, 10vh, 112px) var(--pad) 0; }
+  .games.flush { padding: 0; }
   .head {
     display: flex;
     justify-content: space-between;

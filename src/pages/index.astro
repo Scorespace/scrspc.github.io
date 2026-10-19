@@ -1,731 +1,267 @@
 ---
-import { jams, themeByUrl } from '../data/jams';
-import { fetchScoreSpaceJams } from '../lib/itch-jams';
-
-const BASE = import.meta.env.BASE_URL;
-
-const pageTitle = 'ScoreSpace - Community-powered game publisher';
-const pageDescription = 'ScoreSpace is a game publisher fueled by monthly game jam events.';
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL('/og.png', Astro.site).href;
-
-type JamEntry = typeof jams[number];
-
-const fetched = await fetchScoreSpaceJams();
-const source: JamEntry[] = fetched.length
-  ? fetched.map(j => ({ ...j, theme: j.url ? themeByUrl[j.url] : undefined }))
-  : jams;
-
-const byYear = new Map<number, JamEntry[]>();
-for (const j of source) {
-  const y = new Date(j.date).getFullYear();
-  if (!byYear.has(y)) byYear.set(y, []);
-  byYear.get(y)!.push(j);
-}
-const years = Array.from(byYear.keys()).sort((a, b) => b - a);
-
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString('en-US', {
-    month: 'short',
-    day: '2-digit',
-    timeZone: 'UTC',
-  }).toUpperCase();
-
-const isSpeed = (name: string) => /speedjam|foddian/i.test(name);
+// The homepage: the tagline and the three arcade cabinets, then the story under them.
+// One pinned stage, three chapters you scroll through: creativity, volume,
+// distribution. Beside them a field of game tiles changes shape with each one:
+// one idea standing out, a dune of submissions with a few top picks lit, then
+// those picks fused into one game, linked out to the platforms around it.
+// Then the featured games, and the way in to events on Jamzo.
+//
+// Where there is no room to pin, or the reader asked for less motion, the
+// chapters are simply sections and the field stays in view beside them (on top,
+// on a phone), changing shape as each chapter arrives.
+import '../styles/soft.css';
+import ArcadeHero from '../components/ArcadeHero.astro';
+import EventsBand from '../components/EventsBand.astro';
+import GamesAccordion from '../components/GamesAccordion.astro';
+import HairlineFigure from '../components/HairlineFigure.astro';
+import SoftChrome from '../components/SoftChrome.astro';
+import Minimal from '../layouts/Minimal.astro';
+import { brand, pillars, studioDescription, title } from '../data/brand';
 ---
 
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>{pageTitle}</title>
-<meta name="description" content={pageDescription} />
-<link rel="canonical" href={canonical} />
-<meta property="og:type" content="website" />
-<meta property="og:site_name" content="ScoreSpace" />
-<meta property="og:title" content={pageTitle} />
-<meta property="og:description" content={pageDescription} />
-<meta property="og:url" content={canonical} />
-<meta property="og:image" content={ogImage} />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={pageTitle} />
-<meta name="twitter:description" content={pageDescription} />
-<meta name="twitter:image" content={ogImage} />
-<link rel="icon" type="image/png" href={`${BASE}favicon.png`} />
-<link rel="apple-touch-icon" href={`${BASE}apple-touch-icon.png`} />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet" />
-</head>
-<body>
+<Minimal
+  title={title}
+  description={studioDescription}
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&display=swap"
+>
+  <ArcadeHero />
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="#top" class="brand">
-      <img src={`${BASE}logo.png`} alt="ScoreSpace" class="brand-logo" />
-    </a>
-    <div class="nav-links">
-      <a href="#publishing">Publishing</a>
-      <a href="#games">Games</a>
-      <a href="#jams">Jams</a>
-    </div>
-    <div class="nav-cta">
-      <a class="btn-chip" href="https://discord.gg/kCM89sr" target="_blank" rel="noopener">
-        <span class="pulse"></span> Join Discord
-      </a>
-    </div>
-  </div>
-</nav>
-
-<header class="hero" id="top">
-  <div class="hero-bg">
-    <div class="orb a"></div>
-    <div class="orb b"></div>
-    <div class="dots"></div>
-  </div>
-
-  <div class="container">
-    <h1>
-      ScoreSpace is a <span class="swish accent-c">community</span> powered <span class="accent-v">game</span> publisher.
-    </h1>
-    <p class="deck">
-      Each month, our game jam events surface standout developers and promising titles to publish.
-    </p>
-
-    <div class="row">
-      <a class="btn primary" href="https://discord.gg/kCM89sr" target="_blank" rel="noopener">Join Discord <span class="arrow">→</span></a>
-      <a class="btn" href="#publishing">How it works</a>
-      <span class="hero-clock">Next jam in <b id="hm-days">--</b>d <b id="hm-hours">--</b>h</span>
-    </div>
-  </div>
-</header>
-
-<div class="strip">
-  <div class="strip-track">
-    <span>50+ Jams Hosted</span><span class="dot">✦</span>
-    <span class="vio">Since 2019</span><span class="dot">✦</span>
-    <span>4,000+ Games Submitted</span><span class="dot">✦</span>
-    <span class="vio">5M+ Lifetime Players</span><span class="dot">✦</span>
-    <span>Third Friday Every Month</span><span class="dot">✦</span>
-    <span>50+ Jams Hosted</span><span class="dot">✦</span>
-    <span class="vio">Since 2019</span><span class="dot">✦</span>
-    <span>4,000+ Games Submitted</span><span class="dot">✦</span>
-    <span class="vio">5M+ Lifetime Players</span><span class="dot">✦</span>
-    <span>Third Friday Every Month</span><span class="dot">✦</span>
-  </div>
-</div>
-
-<section class="panel" id="jams-intro">
-  <div class="container">
-    <div class="sec-head">
-      <h2>Our events</h2>
-      <p class="lede">These are the unique events that our community gathers for monthly.</p>
-    </div>
-
-    <div class="jams-boxes">
-      <div class="jbox scorejam">
-        <div class="jbox-media">
-          <img src={`${BASE}events/scorejam.png`} alt="ScoreJam" />
-        </div>
-        <h3 class="jbox-title">ScoreJam</h3>
-        <p class="jbox-desc">An arcade-focused game jam where game developers have to make a game with a leaderboard feature. After the event ends, streamers play the top games for high scores.</p>
-      </div>
-
-      <div class="jbox speedjam">
-        <div class="jbox-media">
-          <img src={`${BASE}events/speedjam.png`} alt="SpeedJam" />
-        </div>
-        <h3 class="jbox-title">SpeedJam</h3>
-        <p class="jbox-desc">A jam inspired by speedrunning culture, SpeedJam is like ScoreJam but in this iteration developers make games that are meant to be played as fast as possible. After the event ends, speedrunners race for the fastest times.</p>
-      </div>
-
-      <div class="jbox scorespacex">
-        <div class="jbox-media">
-          <img src={`${BASE}events/scorespacex.png`} alt="ScoreSpace X" />
-        </div>
-        <h3 class="jbox-title">ScoreSpace X</h3>
-        <p class="jbox-desc">Occasionally, we will partner with a third party (creator, platform, etc.) to provide a unique one-off experience to our developer base.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="panel" id="publishing">
-  <div class="container">
-    <div class="sec-head">
-      <span class="kicker">How we publish</span>
-      <h2><span class="accent-c">Jam.</span> <span class="accent-v">Test.</span> Grow.</h2>
-      <p class="lede">Every month, our community events help us find and test promising game concepts.</p>
-    </div>
-
-    <div class="pub-grid">
-      <div class="pub">
-        <span class="num">Step 01</span>
-        <h3>Generate new ideas.</h3>
-        <p>Monthly game jams produce fresh concepts from our global dev community. A theme, 72 hours, hundreds of new games.</p>
-      </div>
-      <div class="pub">
-        <span class="num">Step 02</span>
-        <h3>Validate with players.</h3>
-        <p>Top performers advance to live testing on the target platform, where they're evaluated against key KPIs.</p>
-      </div>
-      <div class="pub">
-        <span class="num">Step 03</span>
-        <h3>Scale to millions.</h3>
-        <p>Validated titles unlock full publishing, monetization, and a team to scale live ops.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="panel" id="games">
-  <div class="container">
-    <div class="sec-head">
-      <h2>Initially made in <span class="accent-c">72 hours.</span></h2>
-      <p class="lede">Titles discovered in our monthly jams and published by ScoreSpace.</p>
-    </div>
-
-    <div class="games">
-      <a class="game" href="https://discord.com/discovery/applications/1300612940486934591" target="_blank" rel="noopener">
-        <div class="thumb">
-          <div class="thumb-ph">
-            <div class="title">Blackjack</div>
+  <main>
+    <section class="story" aria-label="How ScoreSpace works">
+      <div class="stage">
+        <div class="copy">
+          <div class="chapters">
+            <article class="chapter on">
+              <p class="no">01 <span>{pillars[0]}</span></p>
+              <h2 class="big">{brand.belief.lead}</h2>
+              <p class="text wide">{brand.belief.body}</p>
+            </article>
+            <article class="chapter">
+              <p class="no">02 <span>{pillars[1]}</span></p>
+              <p class="num">{brand.jams.stat}</p>
+              <p class="text">{brand.jams.label}. {brand.jams.line}.</p>
+              <p class="aside">We source early game concepts in volume through our game jam events and developer submissions.</p>
+            </article>
+            <article class="chapter">
+              <p class="no">03 <span>{pillars[2]}</span></p>
+              <p class="num">{brand.publishing.stat}</p>
+              <p class="text">{brand.publishing.label}.</p>
+            </article>
           </div>
+          <nav class="progress" aria-label="Chapters">
+            {pillars.map((c, i) => (
+              <button type="button" class:list={['seg', { on: i === 0 }]} data-seg={i} aria-label={`${String(i + 1).padStart(2, '0')} ${c}`}><i></i></button>
+            ))}
+            <span class="count"><b>01</b> / 03</span>
+          </nav>
         </div>
-        <div class="body">
-          <h3>Blackjack</h3>
-          <p class="desc">The first visual Blackjack on Discord. Up to eight players per table, real-time, built for the rhythm of a voice channel.</p>
-          <span class="go">Launch on Discord →</span>
-        </div>
-      </a>
-
-      <div class="game coming-soon">
-        <div class="thumb">
-          <div class="thumb-ph">
-            <div class="title">Coming<br/>soon</div>
-          </div>
-        </div>
-        <div class="body">
-          <h3>Something new.</h3>
-          <p class="desc">At any given moment, we're testing 10–15 games from our events against real users.</p>
-          <a class="go" href="https://discord.gg/kCM89sr" target="_blank" rel="noopener">Get notified →</a>
+        <div class="figure">
+          <HairlineFigure
+            name="concepts"
+            theme="dark"
+            intensity={0}
+            play={false}
+            readout={false}
+            label="A field of game tiles: one idea standing out, then a dune of submissions with three top picks lit, then the picks fused into one game linked to the platforms around it."
+          />
         </div>
       </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="panel" id="jams">
-  <div class="container">
-    <div class="sec-head">
-      <h2>Past events</h2>
-      <p class="lede">Every ScoreSpace jam we've ever held, year by year.</p>
-    </div>
+    <GamesAccordion />
+    <EventsBand />
+  </main>
 
-    <div id="archive">
-      {years.map((y) => {
-        const list = byYear.get(y)!;
-        const P = list.reduce((s, j) => s + j.participants, 0);
-        const S = list.reduce((s, j) => s + j.submissions, 0);
-        return (
-          <div class="year">
-            <div class="year-head">
-              <div class="y">{y}<span class="a">.</span></div>
-              <div class="kick">{list.length} editions</div>
-              <div class="sum">{P.toLocaleString()} devs · {S.toLocaleString()} games</div>
-            </div>
-            <div class="rows">
-              {list.map((j) => {
-                const sp = isSpeed(j.name);
-                return (
-                  <a class={`jam-row ${sp ? 'sp' : ''}`} href={j.url || '#'} target="_blank" rel="noopener">
-                    <div class="d">{formatDate(j.date)}</div>
-                    <div class="n">{j.name}</div>
-                    <div class="t">{j.theme ? `✦ ${j.theme}` : (sp ? 'Speedjam' : 'Collab')}</div>
-                    <div class="s"><b>{j.participants.toLocaleString()}</b> devs</div>
-                    <div class="s"><b>{j.submissions}</b> games</div>
-                    <div class="go">↗</div>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-</section>
+  <SoftChrome part="foot" />
+</Minimal>
 
-<footer class="foot">
-  <div class="container">
-    <div class="col colophon">
-      <img src={`${BASE}logo.png`} alt="ScoreSpace" class="foot-logo" />
-      Make games. Play games.<br/><br/>
-      © {new Date().getFullYear()} ScoreSpace.
-    </div>
-    <div class="col">
-      <b>Explore</b>
-      <a href="#publishing">Publishing</a>
-      <a href="#games">Games</a>
-      <a href="#jams">Jams</a>
-    </div>
-    <div class="col">
-      <b>Follow</b>
-      <a href="https://discord.gg/kCM89sr" target="_blank" rel="noopener">Discord</a>
-      <a href="https://x.com/scrspc" target="_blank" rel="noopener">Twitter</a>
-      <a href="https://bsky.app/profile/scorespace.net" target="_blank" rel="noopener">Bluesky</a>
-    </div>
-    <div class="col">
-      <b>Help &amp; Legal</b>
-      <a href={`${BASE}support/`}>Support</a>
-      <a href={`${BASE}privacy/`}>Privacy Policy</a>
-      <a href={`${BASE}terms/`}>Terms &amp; Conditions</a>
-    </div>
-  </div>
-</footer>
-
-<script is:inline>
-(function () {
-  function nextThirdFriday() {
-    var now = new Date();
-    var y = now.getFullYear(), m = now.getMonth();
-    var tf = function (yy, mm) {
-      var f = new Date(yy, mm, 1);
-      var ff = new Date(yy, mm, 1 + ((5 - f.getDay() + 7) % 7));
-      var t = new Date(ff);
-      t.setDate(ff.getDate() + 14);
-      t.setUTCHours(20, 0, 0, 0);
-      return t;
-    };
-    var t = tf(y, m);
-    if (now >= t) { m++; if (m > 11) { m = 0; y++; } t = tf(y, m); }
-    return t;
-  }
-  function pad(n) { return String(n).padStart(2, '0'); }
-  function tick() {
-    var diff = nextThirdFriday() - new Date();
-    if (diff <= 0) return;
-    var d = Math.floor(diff / 864e5);
-    var h = Math.floor((diff % 864e5) / 36e5);
-    var de = document.getElementById('hm-days'); if (de) de.textContent = d;
-    var he = document.getElementById('hm-hours'); if (he) he.textContent = pad(h);
-  }
-  tick();
-  setInterval(tick, 30000);
-})();
-</script>
-
-<style is:global>
-  :root {
-    --ink:      #0a0b1f;
-    --ink-2:    #0f1130;
-    --ink-3:    #161944;
-    --line:     rgba(255,255,255,.10);
-    --line-2:   rgba(255,255,255,.05);
-    --fog:      rgba(255,255,255,.72);
-    --mute:     rgba(255,255,255,.50);
-    --cyan:     #06befc;
-    --violet:   #7a2bff;
-    --cyan-soft:#8fd7ff;
-    --violet-soft:#c6a6ff;
-
-    --head: 'Russo One', system-ui, sans-serif;
-    --body: 'Lato', system-ui, sans-serif;
-
-    --maxw: 1240px;
-    --gutter: clamp(20px, 4vw, 48px);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    background: var(--ink);
-    color: #fff;
-    font-family: var(--body);
-    font-weight: 400;
-    overflow-x: hidden;
-  }
-  body {
-    font-size: 16px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    letter-spacing: .005em;
-  }
-  a { color: inherit; text-decoration: none; }
-  img { max-width: 100%; display: block; }
-  button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
-
-  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 var(--gutter); }
-
-  h1, h2, h3, h4 {
-    font-family: var(--head);
-    font-weight: 400;
-    letter-spacing: -.01em;
-    line-height: 1;
-  }
-  .kicker {
-    font-family: var(--head);
-    font-size: 12px;
-    letter-spacing: .24em;
-    text-transform: uppercase;
-    color: var(--cyan);
-  }
-
-  /* NAV */
-  .nav {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(10,11,31,.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
-  }
-  .nav-inner {
-    max-width: var(--maxw); margin: 0 auto;
-    padding: 18px var(--gutter);
+<style>
+  .stage {
+    padding: 0 var(--pad);
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 20px;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 16px;
+    align-items: start;
   }
-  .brand {
-    display: flex; align-items: center;
-    transition: opacity .2s ease;
-  }
-  .brand:hover { opacity: .8; }
-  .brand-logo {
-    height: 48px; width: auto; display: block;
-  }
-  .nav-links {
-    display: flex; justify-content: center; gap: 36px;
-    font-family: var(--head); font-size: 13px; letter-spacing: .06em; text-transform: uppercase;
-  }
-  .nav-links a {
-    color: var(--fog);
-    position: relative; padding: 4px 0;
-    transition: color .2s ease;
-  }
-  .nav-links a:hover { color: #fff; }
-  .nav-links a::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
-    height: 2px; background: var(--cyan);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform .3s ease;
-  }
-  .nav-links a:hover::after { transform: scaleX(1); }
-  .nav-cta { justify-self: end; }
-  .btn-chip {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 11px 18px; border: 1px solid var(--line);
-    font-family: var(--head); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
-    border-radius: 999px; transition: all .2s ease;
-  }
-  .btn-chip:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-1px); }
-  .pulse {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--cyan);
-    box-shadow: 0 0 0 0 rgba(6,190,252,.7);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(6,190,252,.7); }
-    70%  { box-shadow: 0 0 0 10px rgba(6,190,252,0); }
-    100% { box-shadow: 0 0 0 0 rgba(6,190,252,0); }
-  }
+  /* The field on the left, so the page alternates under the hero. */
+  .figure { grid-column: 1 / span 6; grid-row: 1; position: sticky; top: 12svh; }
+  .copy { grid-column: 8 / span 5; grid-row: 1; }
+  .figure :global(.hl) { max-width: 620px; margin: 0 auto; }
 
-  /* HERO */
-  .hero {
-    position: relative; overflow: hidden;
-    padding: clamp(80px, 14vh, 160px) 0 clamp(100px, 16vh, 180px);
+  .no {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
   }
-  .hero-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-  .hero-bg .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: .45; }
-  .hero-bg .orb.a {
-    width: 720px; height: 720px; left: -180px; top: -220px;
-    background: radial-gradient(circle, var(--violet), transparent 60%);
-  }
-  .hero-bg .orb.b {
-    width: 600px; height: 600px; right: -180px; top: 180px;
-    background: radial-gradient(circle, var(--cyan), transparent 60%);
-  }
-  .hero-bg .dots {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,.08) 1.2px, transparent 1.2px);
-    background-size: 36px 36px;
-    mask-image: radial-gradient(ellipse at 50% 40%, #000 40%, transparent 80%);
-  }
-  .hero .container { position: relative; }
-  .hero h1 {
-    font-size: clamp(44px, 7vw, 104px);
-    letter-spacing: -.02em; line-height: .98;
-    max-width: 18ch;
-  }
-  .hero h1 .accent-c { color: var(--cyan); }
-  .hero h1 .accent-v { color: var(--violet-soft); }
-  .hero h1 .swish { display: inline-block; }
-  .hero .deck {
-    max-width: 560px; margin-top: 36px;
-    font-size: 19px; line-height: 1.6; color: var(--fog); font-weight: 300;
-  }
-  .hero .deck b { color: #fff; font-weight: 700; }
-  .hero .row { margin-top: 52px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-
-  .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 16px 26px;
-    font-family: var(--head); font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
-    border: 2px solid #fff; color: #fff; background: transparent;
-    border-radius: 999px;
-    transition: all .2s ease;
-  }
-  .btn:hover { background: #fff; color: var(--ink); transform: translateY(-2px); }
-  .btn.primary { background: var(--cyan); color: var(--ink); border-color: var(--cyan); }
-  .btn.primary:hover { background: #fff; border-color: #fff; }
-  .btn .arrow { transition: transform .2s ease; }
-  .btn:hover .arrow { transform: translateX(4px); }
-
-  .hero-clock {
-    display: inline-flex; align-items: center; gap: 14px;
-    padding: 10px 18px; border: 1px solid var(--line); border-radius: 999px;
-    font-family: var(--head); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--fog);
-  }
-  .hero-clock b { color: var(--cyan); font-weight: 400; }
-
-  /* MARQUEE STRIP */
-  .strip {
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 22px 0;
-    overflow: hidden;
-    font-family: var(--head); font-size: 32px; letter-spacing: -.01em;
-    color: var(--fog);
-  }
-  .strip-track {
-    display: inline-flex; white-space: nowrap;
-    animation: slide 40s linear infinite;
-    gap: 56px; padding-left: 56px; align-items: center;
-  }
-  .strip-track span.dot { color: var(--cyan); font-size: 24px; }
-  .strip-track span.vio { color: var(--violet-soft); }
-  @keyframes slide { to { transform: translateX(-50%); } }
-
-  /* SECTION SHELL */
-  section.panel { padding: clamp(80px, 14vw, 180px) 0; position: relative; }
-  .sec-head { max-width: 900px; margin-bottom: 72px; }
-  .sec-head .kicker { margin-bottom: 20px; display: block; }
-  .sec-head h2 { font-size: clamp(44px, 6.5vw, 104px); letter-spacing: -.02em; }
-  .sec-head h2 .accent-c { color: var(--cyan); }
-  .sec-head h2 .accent-v { color: var(--violet-soft); }
-  .sec-head p.lede {
-    margin-top: 24px; font-size: 18px; color: var(--fog);
-    max-width: 640px; font-weight: 300; line-height: 1.7;
-  }
-
-  /* JAMS BOXES */
-  .jams-boxes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-  .jbox {
-    position: relative;
-    border-radius: 20px;
-    padding: 0;
-    display: flex; flex-direction: column;
-    background: transparent;
-    border: 1.5px solid var(--cyan);
-    overflow: hidden;
-  }
-  .jbox-media {
-    position: relative;
-    aspect-ratio: 16/9;
-    border: 0;
-    border-bottom: 1.5px solid var(--cyan);
-    border-radius: 0;
-    background: #000;
-    overflow: hidden;
-  }
-  .jbox-media img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-  }
-  .jbox-title {
-    font-family: var(--head);
-    font-size: clamp(28px, 3vw, 40px);
-    letter-spacing: -.01em;
-    color: #fff;
-    padding: 28px 28px 0;
-  }
-  .jbox-desc {
-    color: var(--fog);
-    font-size: 15px;
-    line-height: 1.65;
+  .no span { color: var(--muted); }
+  .big {
+    margin: 20px 0 0;
     font-weight: 300;
-    padding: 14px 28px 28px;
-    max-width: 52ch;
+    font-size: clamp(30px, 3.1vw, 48px);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    color: var(--bright);
+    text-wrap: balance;
   }
+  .num {
+    margin-top: 18px;
+    font-weight: 300;
+    font-size: clamp(88px, 10vw, 160px);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    color: var(--bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .text { margin-top: 18px; max-width: 30ch; color: var(--muted); font-size: 18px; }
+  .text.wide { max-width: 44ch; line-height: 1.55; }
+  .aside { margin-top: 14px; max-width: 40ch; color: var(--dim); font-size: 15px; }
 
-  @media (max-width: 980px) {
-    .jams-boxes { grid-template-columns: 1fr; gap: 16px; }
-  }
+  /* Stacked, the default: the chapters run down the right, the field holds still beside them. */
+  .chapter { min-height: 70svh; display: flex; flex-direction: column; justify-content: center; padding: 48px 0; }
+  .progress { display: none; }
 
-  /* PUBLISHING */
-  .pub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-  .pub {
-    padding: 40px 0;
-    display: flex; flex-direction: column; gap: 20px;
-    position: relative;
-    border-top: 2px solid #fff;
+  /* Pinned, where there is room and motion is welcome: one stage, chapters taking turns. */
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .stage { height: 100svh; align-items: center; }
+    :global(.js) .figure { position: static; }
+    :global(.js) .chapters { position: relative; height: min(460px, 58svh); }
+    :global(.js) .chapter { position: absolute; inset: 0; min-height: 0; padding: 0; visibility: hidden; }
+    :global(.js) .chapter.on { visibility: visible; }
+    :global(.js) .progress { display: flex; align-items: center; gap: 8px; margin-top: 32px; }
   }
-  .pub:nth-child(1) { border-top-color: var(--cyan); }
-  .pub:nth-child(2) { border-top-color: var(--violet); }
-  .pub:nth-child(3) { border-top-color: #fff; }
-  .pub .num {
-    font-family: var(--head); font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--fog);
-  }
-  .pub:nth-child(1) .num { color: var(--cyan); }
-  .pub:nth-child(2) .num { color: var(--violet-soft); }
-  .pub h3 { font-size: clamp(32px, 3.4vw, 48px); letter-spacing: -.01em; }
-  .pub p { color: var(--fog); font-size: 16px; line-height: 1.65; font-weight: 300; }
-
-  /* GAMES */
-  .games { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
-  .game {
-    display: flex; flex-direction: column;
-    border-radius: 24px; overflow: hidden;
-    background: var(--ink-2);
-    border: 1px solid var(--line);
-    transition: transform .3s ease, border-color .3s ease;
-  }
-  .game:hover { transform: translateY(-6px); border-color: var(--cyan); }
-  .game .thumb {
-    aspect-ratio: 16/10; position: relative; overflow: hidden;
-    background:
-      radial-gradient(circle at 70% 30%, rgba(122,43,255,.5), transparent 55%),
-      radial-gradient(circle at 20% 80%, rgba(6,190,252,.4), transparent 55%),
-      linear-gradient(135deg, #15183a, #090b20);
-  }
-  .game:nth-child(2) .thumb {
-    background:
-      radial-gradient(circle at 30% 30%, rgba(6,190,252,.55), transparent 55%),
-      radial-gradient(circle at 80% 80%, rgba(122,43,255,.45), transparent 55%),
-      linear-gradient(135deg, #0f1130, #1a1b42);
-  }
-  .game.coming-soon .thumb {
-    background:
-      repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0 20px, transparent 20px 40px),
-      radial-gradient(circle at 50% 50%, rgba(122,43,255,.35), transparent 60%),
-      linear-gradient(135deg, #0c0e28, #14163a);
-  }
-  .game.coming-soon .thumb-ph .title { color: var(--cyan-soft); }
-  .game.coming-soon { border-style: dashed; }
-  .game.coming-soon .go { color: var(--cyan); border-color: var(--cyan); }
-  .game.coming-soon .go:hover { background: var(--cyan); color: var(--ink); }
-  .thumb-ph {
-    position: absolute; inset: 0; padding: 28px;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    text-align: center;
-    font-family: var(--head); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--fog);
-  }
-  .thumb-ph .title {
-    font-size: clamp(40px, 4vw, 56px); letter-spacing: -.01em; color: #fff;
-    line-height: 1;
-  }
-  .game .body { padding: 32px; display: flex; flex-direction: column; gap: 14px; }
-  .game h3 { font-size: clamp(28px, 2.8vw, 40px); letter-spacing: -.01em; }
-  .game p.desc { color: var(--fog); font-size: 15px; line-height: 1.65; font-weight: 300; }
-  .game .go {
-    margin-top: 14px; align-self: flex-start;
-    display: inline-flex; align-items: center; gap: 12px;
-    font-family: var(--head); font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
-    color: var(--cyan); padding: 10px 18px; border: 1px solid var(--cyan); border-radius: 999px;
-    transition: all .2s ease;
-  }
-  .game:nth-child(2) .go { color: var(--violet-soft); border-color: var(--violet-soft); }
-  .game .go:hover { background: var(--cyan); color: var(--ink); }
-  .game:nth-child(2) .go:hover { background: var(--violet-soft); color: var(--ink); }
-
-  /* JAM ARCHIVE */
-  .year { margin-bottom: 56px; }
-  .year-head {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: baseline;
-    padding-bottom: 18px; border-bottom: 1px solid var(--line); margin-bottom: 8px;
-  }
-  .year-head .y { font-family: var(--head); font-size: 72px; line-height: .9; color: #fff; letter-spacing: -.02em; }
-  .year-head .y .a { color: var(--cyan); }
-  .year-head .kick {
-    font-family: var(--head); font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
-    color: var(--violet-soft); align-self: center; padding-bottom: 14px;
-  }
-  .year-head .sum {
-    font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--mute);
-    text-align: right; font-family: var(--head);
-  }
-
-  .jam-row {
+  .seg {
+    width: 44px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
     display: grid;
-    grid-template-columns: 90px 1fr 180px 110px 110px 24px;
-    gap: 24px; align-items: center;
-    padding: 18px 8px;
-    border-bottom: 1px solid var(--line-2);
-    transition: background .2s ease, border-color .2s ease, padding .2s ease;
+    align-items: center;
+    transition: scale 160ms var(--ease-out);
   }
-  .jam-row:hover { background: rgba(255,255,255,.03); border-bottom-color: var(--cyan); padding-left: 16px; }
-  .jam-row .d { font-family: var(--head); font-size: 11px; letter-spacing: .12em; color: var(--mute); text-transform: uppercase; }
-  .jam-row .n { font-family: var(--head); font-size: 18px; line-height: 1.2; }
-  .jam-row .t { font-family: var(--head); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); }
-  .jam-row.sp .t { color: var(--violet-soft); }
-  .jam-row.sp .n { color: var(--violet-soft); }
-  .jam-row .s { font-size: 12px; color: var(--fog); text-align: right; font-family: var(--head); }
-  .jam-row .s b { color: #fff; font-weight: 400; }
-  .jam-row .go {
-    color: var(--mute); justify-self: end;
-    transition: color .2s ease, transform .2s ease; font-size: 18px;
+  .seg:active { scale: 0.94; }
+  .seg i {
+    display: block;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--wash-2);
+    position: relative;
+    overflow: hidden;
   }
-  .jam-row:hover .go { color: var(--cyan); transform: translate(4px, -4px); }
+  .seg i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 300ms var(--ease-out);
+  }
+  .seg.on i::after { transform: scaleX(1); }
+  .count { margin-left: 10px; color: var(--dim); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .count b { color: var(--ink); font-weight: 400; }
 
-  @media (max-width: 880px) {
-    .jam-row { grid-template-columns: 1fr auto; gap: 6px 16px; padding: 16px 0; }
-    .jam-row:hover { padding-left: 0; }
-    .jam-row .d { order: 1; }
-    .jam-row .t { order: 2; text-align: right; }
-    .jam-row .n { order: 3; grid-column: 1 / -1; }
-    .jam-row .s { order: 4; grid-column: 1 / -1; text-align: left; }
-    .jam-row .go { display: none; }
-  }
-
-  /* FOOTER */
-  .foot {
-    padding: 56px 0 40px; border-top: 1px solid var(--line);
-    background: var(--ink);
-  }
-  .foot .container {
-    display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 40px; align-items: start;
-  }
-  .foot .col b {
-    display: block; font-family: var(--head); color: #fff; margin-bottom: 14px;
-    font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
-  }
-  .foot .col a {
-    display: block; padding: 4px 0; color: var(--fog); font-size: 14px; font-weight: 300;
-  }
-  .foot .col a:hover { color: var(--cyan); }
-  .foot .colophon { color: var(--mute); font-size: 12px; font-weight: 300; max-width: 320px; }
-  .foot-logo { height: 40px; width: auto; display: block; margin-bottom: 14px; }
-
-  @media (max-width: 880px) {
-    .foot .container { grid-template-columns: 1fr 1fr; gap: 28px; }
-  }
-
-  /* RESPONSIVE */
-  @media (max-width: 980px) {
-    .pub-grid { grid-template-columns: 1fr; gap: 16px; }
-    .games { grid-template-columns: 1fr; }
-    .year-head { grid-template-columns: 1fr auto; gap: 8px 20px; }
-    .year-head .sum { grid-column: 1 / -1; text-align: left; }
-    .nav-links { display: none; }
+  /* On a phone: the field sticks to the top, no taller than a third of the screen, and the chapters pass under it. */
+  @media (max-width: 899px) {
+    .figure {
+      grid-column: 1 / -1;
+      top: 0;
+      z-index: 2;
+      padding: 8px 0 4px;
+      background: var(--ground);
+      box-shadow: 0 12px 16px -8px var(--ground);
+    }
+    .figure :global(.hl) { width: min(100%, calc(34svh * 1.25)); }
+    .copy { grid-column: 1 / -1; grid-row: 2; }
+    .chapter { min-height: 56svh; padding: 32px 0; border-top: 1px solid var(--rule); }
   }
 </style>
 
-</body>
-</html>
+<script>
+  import { gsap, onMotionOr, ScrollTrigger } from '../lib/motion';
+
+  const chapters = [...document.querySelectorAll<HTMLElement>('.story .chapter')];
+  const segs = [...document.querySelectorAll<HTMLButtonElement>('.story .seg')];
+  const count = document.querySelector<HTMLElement>('.story .count b')!;
+  const host = document.querySelector<HTMLElement & { hairline?: { set: (i: number) => void } }>('[data-hl-figure="concepts"]');
+  /** The field's shape follows the chapter: 0 creativity, 1 volume, 2 distribution. */
+  const shape = (i: number) => host?.hairline?.set(i / 2);
+
+  const mm = gsap.matchMedia();
+  mm.add(
+    { pinned: '(min-width: 900px) and (prefers-reduced-motion: no-preference)', stacked: '(max-width: 899px), (prefers-reduced-motion: reduce)' },
+    (ctx) => {
+      if (ctx.conditions?.stacked) {
+        // Each chapter takes over the field as it crosses the middle of the screen, in either direction.
+        chapters.forEach((c, i) => ScrollTrigger.create({
+          trigger: c,
+          start: 'top 55%',
+          end: 'bottom 55%',
+          onToggle: (self) => { if (self.isActive) shape(i); },
+        }));
+        return;
+      }
+      let current = 0;
+      gsap.from(['.story .figure', '.story .copy'], {
+        autoAlpha: 0, y: 16, duration: 0.8, ease: 'out', stagger: 0.08,
+        scrollTrigger: { trigger: '.story', start: 'top 75%', once: true },
+      });
+
+      // Exit fast, enter slower: the old chapter blurs away in 220ms, the new one settles in over 500ms.
+      function show(next: number) {
+        if (next === current) return;
+        const out = chapters[current], into = chapters[next], dir = next > current ? 1 : -1;
+        gsap.killTweensOf([out, into, ...into.children]);
+        gsap.to(out, { autoAlpha: 0, y: -10 * dir, filter: 'blur(4px)', duration: 0.22, ease: 'inOut', onComplete: () => { out.classList.remove('on'); } });
+        into.classList.add('on');
+        gsap.fromTo(into, { autoAlpha: 0, y: 14 * dir, filter: 'blur(6px)' }, { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'out', delay: 0.08 });
+        gsap.from(into.children, { y: 10 * dir, duration: 0.5, ease: 'out', stagger: 0.05, delay: 0.08, clearProps: 'transform,translate,rotate,scale' });
+        segs.forEach((s, i) => s.classList.toggle('on', i <= next));
+        count.textContent = String(next + 1).padStart(2, '0');
+        shape(next);
+        current = next;
+      }
+
+      // No snapping: the page only moves when the reader scrolls. Each chapter holds for a full screen of
+      // scrolling, the pin split into equal thirds.
+      const st = ScrollTrigger.create({
+        trigger: '.story',
+        start: 'top top',
+        end: '+=300%',
+        pin: '.stage',
+        onUpdate: (self) => show(Math.min(2, Math.floor(self.progress * 3))),
+      });
+      // A segment takes the reader to the middle of its chapter's third.
+      segs.forEach((s, i) => s.addEventListener('click', () => {
+        window.scrollTo({ top: st.start + (st.end - st.start) * ((i + 0.5) / 3), behavior: 'smooth' });
+      }));
+
+      return () => {
+        chapters.forEach((c, i) => { c.classList.toggle('on', i === 0); gsap.set(c, { clearProps: 'all' }); });
+        shape(0);
+      };
+    },
+  );
+
+  onMotionOr(
+    () => {
+      // The games list and the events band rise in as they arrive.
+      gsap.utils.toArray<HTMLElement>('.games [data-reveal], .events [data-reveal]').forEach((el, i) => {
+        gsap.from(el, {
+          autoAlpha: 0, y: 14, duration: 0.6, ease: 'out', delay: (i % 3) * 0.05,
+          clearProps: 'transform,translate,rotate,scale',
+          scrollTrigger: { trigger: el, start: 'top 92%', once: true },
+        });
+      });
+      if (matchMedia('(min-width: 900px)').matches) return;
+      chapters.forEach((c) => gsap.from(c.children, { autoAlpha: 0, y: 14, duration: 0.6, ease: 'out', stagger: 0.05, scrollTrigger: { trigger: c, start: 'top 85%', once: true } }));
+    },
+    () => {},
+  );
+</script>

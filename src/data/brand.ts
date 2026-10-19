@@ -1,6 +1,4 @@
-// Copy and links for the minimal landing page variations (/a/, /b/, /c/).
-// One source of truth, so the variation that wins can be promoted to the
-// homepage without rewriting its words.
+// The site's copy and links, in one place: the homepage and the other pages read their words from here.
 
 export const brand = {
   name: 'ScoreSpace',
@@ -8,9 +6,6 @@ export const brand = {
   logo: 'logo.png',
   statement:
     'ScoreSpace sources early game concepts in volume through its game jam events and developer submissions.',
-  // The statement split where the emphasis changes: what we do, then how.
-  statementLead: 'ScoreSpace sources early game concepts in volume',
-  statementTail: 'through its game jam events and developer submissions.',
   publishing: {
     line: 'We publish games across the web',
     stat: '8M',
@@ -50,18 +45,9 @@ export const brand = {
   ],
 } as const;
 
-// The numbered rows of the index variations (/b/ and its siblings). `num` is
-// the figure in a row's last column, which the pages animate on its own.
-export const indexRows = [
-  { no: '01', key: 'Sourcing', val: 'Game jam events + unique developer submissions', num: '', aux: 'Early concepts, in volume' },
-  { no: '02', key: 'Publishing', val: brand.publishing.line, num: brand.publishing.long, aux: brand.publishing.label },
-  { no: '03', key: 'Jams', val: brand.jams.line, num: brand.jams.stat, aux: brand.jams.label },
-];
-
 // The three ideas the arcade story walks through, in order.
 export const pillars = ['Creativity', 'Volume', 'Distribution'] as const;
 
-export const title = 'ScoreSpace';
-export const description = brand.statement;
-// The /b1/arcade/ pages lead with the tagline; the statement follows it in search results.
+export const title = 'ScoreSpace - A game studio powered by game jams';
+// The homepage leads with the tagline; the statement follows it in search results.
 export const studioDescription = `${brand.tagline}${/[.!?]$/.test(brand.tagline) ? '' : '.'} ${brand.statement}`;

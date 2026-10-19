@@ -1,6 +1,6 @@
 # ScoreSpace Website
 
-A personal website built with [Astro](https://astro.build) featuring game jams and games from ScoreSpace.
+The ScoreSpace website, built with [Astro](https://astro.build): a game studio powered by game jams.
 
 ## Quick Start
 
@@ -21,32 +21,22 @@ npm run preview
 ## Project Structure
 
 ```
-├── public/              # Static assets (favicon, images)
+├── public/              # Static assets (favicon, logo, share image, Hairline figures)
 ├── src/
-│   ├── data/            # Data files (jams.ts, games.ts)
-│   ├── layouts/         # Page layouts
-│   └── pages/           # Site pages (index, jams, games)
+│   ├── components/      # Homepage hero, story, games list, events band, header/footer
+│   ├── data/            # brand.ts (copy and links), games.ts
+│   ├── layouts/         # Minimal (the <head>), Page (games, privacy, support, terms)
+│   ├── lib/             # motion.ts (GSAP setup)
+│   └── pages/           # index, games, privacy, support, terms
 ├── astro.config.mjs     # Astro configuration
 └── package.json
 ```
 
 ## Adding Content
 
-### Adding a New Game Jam
+### Editing the Copy
 
-Edit `src/data/jams.ts` and add a new entry to the `jams` array:
-
-```typescript
-{
-  name: "Your Jam Name",
-  date: "2025-01-01",
-  participants: 100,
-  submissions: 25,
-  ranked: true,
-  prize: "$500",  // optional
-  url: "https://itch.io/jam/your-jam"
-}
-```
+The homepage's words (tagline, story, stats, links) live in `src/data/brand.ts`.
 
 ### Adding a New Game
 
@@ -58,9 +48,12 @@ Edit `src/data/games.ts` and add a new entry to the `games` array:
   description: "A brief description of your game.",
   url: "https://itch.io/game-link",
   playable: "browser",  // "browser", "download", or "both"
-  tags: ["tag1", "tag2"]  // optional
+  platform: "web",      // "discord", "itch", "steam", "web", or "reddit"
+  showcase: true        // optional: also list it under Featured Games on the homepage
 }
 ```
+
+Every game is listed on `/games/`.
 
 ---
 

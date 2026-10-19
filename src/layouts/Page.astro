@@ -1,0 +1,83 @@
+---
+// The shell for the site's other pages (games, privacy, support, terms): the homepage's look and its
+// header and footer, a title block, and the prose styles the long pages use.
+import '../styles/soft.css';
+import SoftChrome from '../components/SoftChrome.astro';
+import Minimal from './Minimal.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  heading: string;
+  subtitle?: string;
+}
+
+const { title, description, heading, subtitle } = Astro.props;
+---
+
+<Minimal
+  title={title}
+  description={description}
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&display=swap"
+>
+  <SoftChrome part="top" />
+  <main class="page">
+    <header class="page-head" data-reveal>
+      <h1>{heading}</h1>
+      {subtitle && <p class="sub">{subtitle}</p>}
+    </header>
+    <slot />
+  </main>
+  <SoftChrome part="foot" />
+</Minimal>
+
+<style>
+  .page { padding: clamp(32px, 8vh, 88px) var(--pad) clamp(48px, 10vh, 112px); }
+  .page-head { max-width: 780px; margin-bottom: clamp(28px, 6vh, 56px); }
+  h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(36px, 4.4vw, 60px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--bright);
+    text-wrap: balance;
+  }
+  .sub { margin-top: 14px; max-width: 60ch; color: var(--muted); font-size: 17px; }
+
+  /* Long pages: privacy, support, terms. */
+  .page :global(.legal) { max-width: 720px; }
+  .page :global(.legal p),
+  .page :global(.legal li) { color: var(--muted); font-size: 16px; line-height: 1.75; }
+  .page :global(.legal p) { margin-bottom: 1.1rem; }
+  .page :global(.legal strong) { color: var(--ink); font-weight: 500; }
+  .page :global(.legal h2) { margin: 2.6rem 0 0.9rem; color: var(--bright); font-weight: 500; font-size: 22px; letter-spacing: -0.01em; }
+  .page :global(.legal h3) { margin: 1.8rem 0 0.6rem; color: var(--ink); font-weight: 500; font-size: 17px; }
+  .page :global(.legal ul),
+  .page :global(.legal ol) { margin: 0 0 1.2rem 1.2rem; padding: 0; }
+  .page :global(.legal li) { margin-bottom: 0.5rem; }
+  .page :global(.legal a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: rgba(187, 169, 255, 0.4);
+    text-underline-offset: 3px;
+  }
+  .page :global(.legal-footer-note) { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: 14px; }
+</style>
+
+<script>
+  import { gsap, onMotion } from '../lib/motion';
+
+  // The page settles in: the header, the title, then what follows, 60ms apart.
+  onMotion(() => {
+    gsap.from('.soft-top, .page-head, .page > :not(.page-head)', {
+      autoAlpha: 0,
+      y: 12,
+      duration: 0.6,
+      ease: 'out',
+      stagger: 0.06,
+      clearProps: 'transform,translate,rotate,scale',
+    });
+  });
+</script>

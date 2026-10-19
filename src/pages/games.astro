@@ -1,436 +1,74 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { games } from '../data/games';
+// Every game ScoreSpace publishes, then how a jam game gets published, in the homepage's look.
+import GamesAccordion from '../components/GamesAccordion.astro';
+import Page from '../layouts/Page.astro';
+import { brand } from '../data/brand';
+
+const discord = brand.social.find((s) => s.label === 'Discord')!.url;
+const steps = [
+  ['Join a Jam', 'Participate in one of our monthly game jams with unique themes'],
+  ['Create a Game', 'Build something awesome within the jam timeframe'],
+  ['Get Noticed', 'Outstanding games catch our attention through community voting'],
+  ['Get Published', "We'll reach out to help polish and publish your game"],
+];
 ---
 
-<Layout title="Games - ScoreSpace" description="Play games created by ScoreSpace.">
-  <section class="page-header">
-    <div class="container">
-      <h1>Games</h1>
-      <p class="subtitle">
-        Games that started in our gamejam events that went on to be published by ScoreSpace.
-      </p>
-    </div>
+<Page
+  title="Games - ScoreSpace"
+  description="Play games created by ScoreSpace."
+  heading="Games"
+  subtitle="Games that started in our gamejam events that went on to be published by ScoreSpace."
+>
+  <GamesAccordion all label="All Games" flush />
+
+  <section class="publish" aria-labelledby="publish-title">
+    <h2 id="publish-title">How to Get Published</h2>
+    <p class="intro">ScoreSpace discovers and publishes games from our monthly jams. Here's how it works:</p>
+    <ol class="steps">
+      {steps.map(([name, line], i) => (
+        <li>
+          <span class="no">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{name}</h3>
+          <p>{line}</p>
+        </li>
+      ))}
+    </ol>
+    <a class="pill" href={discord} target="_blank" rel="noopener">Join Discord for More Info <span class="arrow" aria-hidden="true">↗</span></a>
   </section>
 
-  <section class="games-section">
-    <div class="container">
-      {games.length > 0 ? (
-        <div class="games-grid">
-          {games.map((game) => (
-            <a href={game.url} target="_blank" rel="noopener noreferrer" class="game-card scroll-fade-in">
-              {game.thumbnail && (
-                <div class="game-thumbnail">
-                  <img src={`${import.meta.env.BASE_URL}${game.thumbnail.replace(/^\//, '')}`} alt={game.name} />
-                </div>
-              )}
-              <div class="game-content">
-                <h2>{game.name}</h2>
-                <p class="game-description">{game.description}</p>
-                <div class="game-meta">
-                  <span class={`platform-badge platform-${game.platform}`}>
-                    {game.platform === 'discord' && 'Discord'}
-                    {game.platform === 'itch' && 'itch.io'}
-                    {game.platform === 'steam' && 'Steam'}
-                    {game.platform === 'web' && 'Web'}
-                    {game.platform === 'reddit' && 'Reddit'}
-                  </span>
-                  <span class="playable-badge">
-                    {game.playable === 'browser' && 'Play in Browser'}
-                    {game.playable === 'download' && 'Download'}
-                    {game.playable === 'both' && 'Browser & Download'}
-                  </span>
-                </div>
-                {game.tags && game.tags.length > 0 && (
-                  <div class="game-tags">
-                    {game.tags.map((tag) => (
-                      <span class="tag">{tag}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div class="game-cta">
-                <span class="play-button">Play Now</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <div class="empty-state">
-          <p>No games available yet. Check back soon!</p>
-        </div>
-      )}
-    </div>
+  <section class="more" aria-labelledby="more-title">
+    <h2 id="more-title">Looking for more games?</h2>
+    <p>
+      Check out the thousands of games submitted to our game jams on itch.io.
+      Each jam features unique themes and creative submissions from developers worldwide.
+    </p>
+    <a class="pill" href="https://itch.io/jams/hosted-by-scorespace" target="_blank" rel="noopener">Browse Jam Submissions <span class="arrow" aria-hidden="true">↗</span></a>
   </section>
-
-  <section class="how-to-publish">
-    <div class="container">
-      <div class="publish-content scroll-fade-in">
-        <h2>How to Get Published</h2>
-        <p class="publish-intro">
-          ScoreSpace discovers and publishes games from our monthly jams. Here's how it works:
-        </p>
-        <div class="publish-steps">
-          <div class="publish-step">
-            <span class="step-number">1</span>
-            <h3>Join a Jam</h3>
-            <p>Participate in one of our monthly game jams with unique themes</p>
-          </div>
-          <div class="publish-step">
-            <span class="step-number">2</span>
-            <h3>Create a Game</h3>
-            <p>Build something awesome within the jam timeframe</p>
-          </div>
-          <div class="publish-step">
-            <span class="step-number">3</span>
-            <h3>Get Noticed</h3>
-            <p>Outstanding games catch our attention through community voting</p>
-          </div>
-          <div class="publish-step">
-            <span class="step-number">4</span>
-            <h3>Get Published</h3>
-            <p>We'll reach out to help polish and publish your game</p>
-          </div>
-        </div>
-        <a href="https://discord.gg/kCM89sr" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-          Join Discord for More Info
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="jam-games-cta">
-    <div class="container">
-      <div class="cta-content scroll-fade-in">
-        <h2>Looking for more games?</h2>
-        <p>
-          Check out the thousands of games submitted to our game jams on itch.io.
-          Each jam features unique themes and creative submissions from developers worldwide.
-        </p>
-        <a href="https://itch.io/jams/hosted-by-scorespace" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
-          Browse Jam Submissions
-        </a>
-      </div>
-    </div>
-  </section>
-</Layout>
+</Page>
 
 <style>
-  .page-header {
-    padding: 4rem 0 3rem;
-    text-align: center;
-    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-bg) 100%);
-  }
-
-  .page-header h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: white;
-    text-transform: uppercase;
-  }
-
-  .subtitle {
-    color: var(--color-text-muted);
-    font-size: 1.1rem;
-    margin: 0 auto;
-    white-space: nowrap;
-  }
-
-  .games-section {
-    padding: 3rem 0;
-  }
-
-  .games-grid {
+  .publish,
+  .more { margin-top: clamp(56px, 10vh, 112px); }
+  h2 { margin: 0; font-weight: 500; font-size: clamp(24px, 2.6vw, 34px); letter-spacing: -0.02em; color: var(--bright); }
+  .intro,
+  .more p { margin-top: 12px; max-width: 60ch; color: var(--muted); font-size: 17px; }
+  .steps {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 28px 0;
+    padding: 0;
+    list-style: none;
   }
-
-  .game-card {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: all 0.2s ease;
+  .steps li { padding: 22px; border-radius: 24px; background: var(--wash); box-shadow: inset 0 0 0 1px var(--edge); }
+  .no { color: var(--accent); font-size: 14px; font-variant-numeric: tabular-nums; }
+  h3 { margin: 14px 0 6px; font-weight: 500; font-size: 18px; color: var(--ink); }
+  .steps p { color: var(--muted); font-size: 15px; }
+  .more .pill { margin-top: 24px; }
+  @media (max-width: 900px) {
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-
-  .game-card:hover {
-    border-color: var(--color-games);
-    transform: translateY(-4px);
-    color: var(--color-text);
-  }
-
-  .game-thumbnail {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .game-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .game-card:hover .game-thumbnail img {
-    transform: scale(1.05);
-  }
-
-  .game-content {
-    padding: 2rem;
-    flex: 1;
-  }
-
-  .game-content h2 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-    color: white;
-    text-transform: uppercase;
-    font-weight: 900;
-    letter-spacing: 0.02em;
-  }
-
-  .game-description {
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    margin-bottom: 1rem;
-  }
-
-  .game-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .platform-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .platform-discord {
-    background-color: rgba(88, 101, 242, 0.15);
-    color: #5865F2;
-  }
-
-  .platform-itch {
-    background-color: rgba(250, 92, 92, 0.15);
-    color: #FA5C5C;
-  }
-
-  .platform-steam {
-    background-color: rgba(102, 192, 244, 0.15);
-    color: #66C0F4;
-  }
-
-  .platform-reddit {
-    background-color: rgba(255, 69, 0, 0.15);
-    color: #FF4500;
-  }
-
-  .platform-web {
-    background-color: rgba(6, 190, 252, 0.15);
-    color: var(--color-jams);
-  }
-
-  .playable-badge {
-    display: inline-block;
-    background-color: rgba(139, 92, 246, 0.15);
-    color: var(--color-games);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .game-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  .tag {
-    background-color: rgba(139, 92, 246, 0.1);
-    color: var(--color-games);
-    padding: 0.25rem 0.625rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-  }
-
-  .game-cta {
-    padding: 1rem 2rem;
-    background-color: var(--color-bg);
-    border-top: 1px solid var(--color-border);
-  }
-
-  .play-button {
-    display: block;
-    text-align: center;
-    background-color: var(--color-games);
-    color: var(--color-text);
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: background-color 0.2s ease;
-  }
-
-  .game-card:hover .play-button {
-    background-color: var(--color-games-hover);
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-  }
-
-  .empty-state p {
-    color: var(--color-text-muted);
-    font-size: 1.1rem;
-  }
-
-  .how-to-publish {
-    padding: 4rem 0;
-  }
-
-  .publish-content {
-    text-align: center;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    padding: 3rem 2rem;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .publish-content h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: var(--color-games);
-  }
-
-  .publish-intro {
-    color: var(--color-text-muted);
-    margin-bottom: 2.5rem;
-    font-size: 1.1rem;
-  }
-
-  .publish-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .publish-step {
-    text-align: center;
-    padding: 1rem;
-  }
-
-  .step-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background-color: var(--color-games);
-    color: white;
-    border-radius: 50%;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-  }
-
-  .publish-step h3 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    color: var(--color-text);
-  }
-
-  .publish-step p {
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-
-  .btn-secondary {
-    background-color: transparent;
-    color: var(--color-text);
-    border: 2px solid var(--color-games);
-  }
-
-  .btn-secondary:hover {
-    background-color: var(--color-games);
-    color: white;
-  }
-
-  .jam-games-cta {
-    padding: 4rem 0;
-  }
-
-  .cta-content {
-    text-align: center;
-    background-color: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    padding: 3rem 2rem;
-    max-width: 700px;
-    margin: 0 auto;
-  }
-
-  .cta-content h2 {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
-    color: var(--color-text);
-  }
-
-  .cta-content p {
-    color: var(--color-text-muted);
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 0.875rem 2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-  }
-
-  .btn-primary {
-    background-color: var(--color-games);
-    color: var(--color-text);
-  }
-
-  .btn-primary:hover {
-    background-color: var(--color-games-hover);
-    color: var(--color-text);
-  }
-
-  @media (max-width: 640px) {
-    .page-header h1 {
-      font-size: 2rem;
-    }
-
-    .games-grid {
-      grid-template-columns: 1fr;
-    }
+  @media (max-width: 560px) {
+    .steps { grid-template-columns: 1fr; }
   }
 </style>

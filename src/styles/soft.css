@@ -1,6 +1,5 @@
 /*
- * The soft palette from /b1/, shared by its format variations (/b1/dialogue/,
- * /b1/scoreboard/, /b1/bento/, /b1/story/). Dusk charcoal, Lexend, one
+ * The site's palette, shared by the homepage and the other pages. Dusk charcoal, Lexend, one
  * lavender accent, rounded everything. Motion values follow Emil Kowalski's
  * rules: strong custom ease-out, presses at 0.97, hovers only where a hover
  * really exists.
@@ -53,7 +52,7 @@ p { margin: 0; }
   white-space: nowrap;
 }
 
-/* The header and footer every variation shares. */
+/* The header and footer the other pages share (the homepage's hero carries its own header). */
 .soft-top {
   display: flex;
   align-items: center;
@@ -62,7 +61,7 @@ p { margin: 0; }
   height: 80px;
   padding: 0 var(--pad);
 }
-.soft-logo img { display: block; height: 26px; width: auto; }
+.soft-logo img { display: block; height: 34px; width: auto; }
 
 .pill {
   display: inline-flex;

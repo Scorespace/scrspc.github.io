@@ -6,7 +6,7 @@ export interface Game {
   platform: "discord" | "itch" | "steam" | "web" | "reddit";
   tags?: string[];
   thumbnail?: string;
-  /** Shown in the Games list on the arcade pages. */
+  /** Also listed under Featured Games on the homepage. */
   showcase?: boolean;
 }
 
