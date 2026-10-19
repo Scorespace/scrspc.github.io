@@ -1,0 +1,266 @@
+---
+// Variation B3: Index, phosphor. A terminal in green phosphor: IBM Plex Mono, a typed
+// statement with a block cursor, and the CRT whose screen you can draw on.
+import HairlineFigure from '../components/HairlineFigure.astro';
+import Minimal from '../layouts/Minimal.astro';
+import { brand, description, indexRows, title } from '../data/brand';
+
+const BASE = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+---
+
+<Minimal
+  title={title}
+  description={description}
+  noindex
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"
+>
+  <div class="frame">
+    <header class="top" data-reveal>
+      <a class="logo" href={BASE} aria-label={brand.name}>
+        <img src={`${BASE}${brand.logo}`} alt={brand.name} width="800" height="463" />
+      </a>
+      <span class="meta" data-scramble>est. {brand.jams.since}</span>
+      <span class="meta wide" data-scramble>game jams → published games</span>
+      <a class="meta link" href={brand.events.url} target="_blank" rel="noopener">[ events on jamzo <span class="arrow" aria-hidden="true">↗</span> ]</a>
+    </header>
+
+    <main class="mid">
+      <h1 class="statement" data-reveal>
+        <span class="typed">{brand.statement}</span><span class="cursor" aria-hidden="true"></span>
+      </h1>
+      <div class="figure" data-reveal>
+        <HairlineFigure name="crt" theme="dark" label="A tube television; its phosphor dots glow where the pointer passes." />
+      </div>
+    </main>
+
+    <ol class="index" data-reveal>
+      {indexRows.map((r) => (
+        <li class="row" data-reveal>
+          <span class="no">{r.no}</span>
+          <span class="key">{r.key.toLowerCase()}</span>
+          <span class="val">{r.val.toLowerCase()}</span>
+          <span class="aux">
+            {r.num && <b data-num={r.num}>{r.num}</b>} {r.aux.toLowerCase()}
+          </span>
+        </li>
+      ))}
+      <li class="row" data-reveal>
+        <a class="row-link" href={brand.events.url} target="_blank" rel="noopener">
+          <span class="no">04</span>
+          <span class="key">events</span>
+          <span class="val">{brand.events.line.toLowerCase()}</span>
+          <span class="aux accent">{brand.events.host} <span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
+      </li>
+    </ol>
+
+    <footer class="foot" data-reveal>
+      <span>© {year} {brand.name.toLowerCase()}</span>
+      <span class="clock" aria-hidden="true">utc --:--:--</span>
+      <nav aria-label="Social">
+        {brand.social.map((s) => <a href={s.url} target="_blank" rel="noopener">{s.label.toLowerCase()}</a>)}
+      </nav>
+      <nav aria-label="Legal">
+        {brand.legal.map((l) => <a href={`${BASE}${l.path}`}>{l.label.toLowerCase()}</a>)}
+      </nav>
+    </footer>
+  </div>
+</Minimal>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    --ground: #040805;
+    --ink: #8eeead;
+    --bright: #d4ffe1;
+    --muted: #4f8c63;
+    --dim: #2f5b3d;
+    --rule: #10261a;
+    --accent: #3dff8a;
+    --pad: clamp(16px, 2.4vw, 32px);
+    --hairline-plate: var(--ground);
+    --hairline-hi: #c9ffd9;
+    --hairline-edge: #3f8a58;
+    --hairline-mid: #1f4a30;
+    --hairline-lo: #13301f;
+    --hl-read: var(--muted);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--ground); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font: 400 13px/1.55 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--accent); color: var(--ground); }
+</style>
+
+<style>
+  .frame {
+    min-height: 100svh;
+    padding: 0 var(--pad);
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+  }
+  .top,
+  .mid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 16px;
+  }
+  .top {
+    align-items: center;
+    height: 64px;
+    color: var(--muted);
+  }
+  .logo { grid-column: span 3; }
+  .logo img { display: block; height: 24px; width: auto; }
+  .meta { grid-column: span 2; white-space: nowrap; }
+  .meta.wide { grid-column: span 4; }
+  .meta.link { grid-column: span 3; justify-self: end; color: var(--accent); transition: color 0.3s, text-shadow 0.3s; }
+  .meta.link:hover { color: var(--bright); text-shadow: 0 0 12px rgba(61, 255, 138, 0.45); }
+  .arrow {
+    display: inline-block;
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  a:hover .arrow { transform: translate(2px, -2px); }
+
+  .mid {
+    align-items: center;
+    padding: clamp(24px, 6vh, 72px) 0;
+  }
+  .statement {
+    grid-column: 1 / span 6;
+    margin: 0;
+    font-weight: 400;
+    font-size: clamp(22px, 2.4vw, 36px);
+    line-height: 1.32;
+    letter-spacing: -0.02em;
+    color: var(--bright);
+    text-shadow: 0 0 18px rgba(61, 255, 138, 0.28);
+  }
+  .cursor {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.05em;
+    margin-left: 0.12em;
+    vertical-align: -0.16em;
+    background: var(--accent);
+    box-shadow: 0 0 14px rgba(61, 255, 138, 0.5);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .cursor { animation: blink 1.05s steps(1) infinite; }
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  .figure { grid-column: 8 / span 5; }
+
+  .index {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px dashed var(--dim);
+  }
+  .row,
+  .row-link {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 16px;
+    align-items: baseline;
+  }
+  .row {
+    padding: 13px 0 14px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .row:has(.row-link) { display: block; }
+  .row-link { grid-column: 1 / -1; }
+  .row:hover { background: rgba(61, 255, 138, 0.05); color: var(--bright); }
+  .row:hover .no::before { content: '>'; position: absolute; margin-left: -1.4ch; color: var(--accent); }
+  .no { grid-column: span 1; color: var(--dim); }
+  .key { grid-column: span 2; color: var(--muted); }
+  .val { grid-column: span 5; }
+  .aux { grid-column: span 4; justify-self: end; text-align: right; color: var(--muted); }
+  .aux b { font-weight: 500; color: var(--bright); font-variant-numeric: tabular-nums; text-shadow: 0 0 12px rgba(61, 255, 138, 0.3); }
+  .aux.accent { color: var(--accent); }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    padding: 18px 0 24px;
+    color: var(--dim);
+  }
+  .clock { font-variant-numeric: tabular-nums; }
+  .foot nav { display: flex; gap: 18px; }
+  .foot nav:last-child { margin-left: auto; }
+  .foot a { transition: color 0.3s; }
+  .foot a:hover { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .meta.wide { display: none; }
+    .logo { grid-column: span 6; }
+    .meta { grid-column: span 3; }
+    .meta.link { grid-column: span 3; }
+    .statement { grid-column: 1 / -1; }
+    .figure { grid-column: 2 / span 10; margin-top: 16px; }
+    .no { grid-column: span 2; }
+    .key { grid-column: span 4; }
+    .val { grid-column: 7 / -1; }
+    .aux { grid-column: 7 / -1; justify-self: start; text-align: left; margin-top: 4px; }
+  }
+  @media (max-width: 560px) {
+    .meta:not(.link) { display: none; }
+    .logo { grid-column: span 5; }
+    .meta.link { grid-column: span 7; }
+    .figure { grid-column: 1 / -1; }
+    .val, .aux { grid-column: 1 / -1; }
+    .val { margin-top: 6px; }
+    .foot nav:last-child { margin-left: 0; }
+  }
+</style>
+
+<script>
+  import { gsap, onMotion } from '../lib/motion';
+
+  // A status-line clock, in UTC like the jams.
+  const clock = document.querySelector<HTMLElement>('.clock');
+  const tick = () => {
+    if (clock) clock.textContent = 'utc ' + new Date().toISOString().slice(11, 19);
+  };
+  tick();
+  setInterval(tick, 1000);
+
+  onMotion(() => {
+    const typed = document.querySelector<HTMLElement>('.typed')!;
+    const full = typed.textContent ?? '';
+    const state = { n: 0 };
+    typed.textContent = '';
+    const tl = gsap.timeline({ defaults: { ease: 'none' } });
+
+    tl.from('.top', { autoAlpha: 0, duration: 0.2 }, 0)
+      .to('[data-scramble]', { duration: 0.9, stagger: 0.12, scrambleText: { text: '{original}', chars: '01', speed: 0.6 } }, 0.1)
+      // The statement types itself out at a terminal's pace; the cursor rides its end.
+      .to(state, {
+        n: full.length,
+        duration: full.length * 0.022,
+        onUpdate: () => { typed.textContent = full.slice(0, Math.round(state.n)); },
+      }, 0.3)
+      .from('.figure', { autoAlpha: 0, duration: 0.6, ease: 'steps(4)' }, 0.5)
+      .from('.index', { autoAlpha: 0, duration: 0.01 }, 1.2)
+      .from('.row', { autoAlpha: 0, duration: 0.01, stagger: 0.14 }, 1.25)
+      .from('.foot', { autoAlpha: 0, duration: 0.01 }, 1.9);
+
+    document.querySelectorAll<HTMLElement>('[data-num]').forEach((el, i) => {
+      tl.set(el, { textContent: '' }, 0).to(
+        el,
+        { duration: 1.2, scrambleText: { text: el.dataset.num!, chars: '0123456789', speed: 0.7 } },
+        1.4 + i * 0.14,
+      );
+    });
+
+    return () => { typed.textContent = full; };
+  });
+</script>

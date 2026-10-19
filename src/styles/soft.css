@@ -1,0 +1,114 @@
+/*
+ * The soft palette from /b1/, shared by its format variations (/b1/dialogue/,
+ * /b1/scoreboard/, /b1/bento/, /b1/story/). Dusk charcoal, Lexend, one
+ * lavender accent, rounded everything. Motion values follow Emil Kowalski's
+ * rules: strong custom ease-out, presses at 0.97, hovers only where a hover
+ * really exists.
+ */
+:root {
+  color-scheme: dark;
+  --ground: #1c1b22;
+  --raised: #222129;
+  --ink: #e4e2ec;
+  --bright: #f7f6fb;
+  --muted: #9a97a8;
+  --dim: #6c6979;
+  --rule: rgba(255, 255, 255, 0.07);
+  --wash: rgba(255, 255, 255, 0.045);
+  --wash-2: rgba(255, 255, 255, 0.08);
+  --edge: rgba(255, 255, 255, 0.06);
+  --accent: #bba9ff;
+  --accent-ink: #19152b;
+  --pad: clamp(18px, 3vw, 44px);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --hairline-plate: var(--ground);
+  --hairline-hi: #f4f2fb;
+  --hairline-edge: #a29eb6;
+  --hairline-mid: #5d5a6c;
+  --hairline-lo: #3b3946;
+  --hl-read: var(--dim);
+}
+
+* { box-sizing: border-box; }
+html { background: var(--ground); }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 300 15px/1.55 'Lexend', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+a { color: inherit; text-decoration: none; }
+p { margin: 0; }
+::selection { background: var(--accent); color: var(--ground); }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The header and footer every variation shares. */
+.soft-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 80px;
+  padding: 0 var(--pad);
+}
+.soft-logo img { display: block; height: 26px; width: auto; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--wash);
+  color: var(--ink);
+  font-weight: 400;
+  font-size: 14px;
+  white-space: nowrap;
+  /* Press feedback on the independent `scale` property, so it never fights a GSAP entrance on `transform`. */
+  transition: background-color 200ms ease, color 200ms ease, scale 160ms var(--ease-out);
+}
+.pill:active { scale: 0.97; }
+.pill.solid { background: var(--accent); color: var(--accent-ink); font-weight: 500; }
+
+.arrow {
+  display: inline-block;
+  transition: transform 200ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pill:hover { background: var(--wash-2); color: var(--bright); }
+  .pill.solid:hover { background: #c9baff; color: var(--accent-ink); }
+  a:hover .arrow { transform: translate(2px, -2px); }
+  a:hover .arrow.right { transform: translateX(3px); }
+}
+
+.soft-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  padding: 28px var(--pad) 30px;
+  font-size: 13px;
+  color: var(--dim);
+}
+.soft-foot nav { display: flex; gap: 20px; }
+.soft-foot nav:last-child { margin-left: auto; }
+.soft-foot a { transition: color 200ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .soft-foot a:hover { color: var(--ink); }
+}
+@media (max-width: 560px) {
+  .soft-foot nav:last-child { margin-left: 0; }
+  .pill { height: 34px; padding: 0 14px; font-size: 13px; }
+}

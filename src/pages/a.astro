@@ -1,0 +1,286 @@
+---
+// Variation A: Statement. Light ground, one huge sentence, two numbers, one link.
+import HairlineFigure from '../components/HairlineFigure.astro';
+import Minimal from '../layouts/Minimal.astro';
+import { brand, description, title } from '../data/brand';
+
+const BASE = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+---
+
+<Minimal
+  title={title}
+  description={description}
+  noindex
+  fonts="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500&family=Inter:wght@400;500&display=swap"
+>
+  <div class="page">
+    <header class="bar" data-reveal>
+      <a class="logo" href={BASE} aria-label={brand.name}>
+        <img src={`${BASE}${brand.logo}`} alt={brand.name} width="800" height="463" />
+      </a>
+      <a class="bar-link" href={brand.events.url} target="_blank" rel="noopener">
+        {brand.events.short} <span class="arrow" aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <main>
+      <h1 class="statement" data-reveal>
+        <span class="lead">{brand.statementLead}</span>
+        <span class="tail">{brand.statementTail}</span>
+      </h1>
+
+      <section class="facts" aria-label="ScoreSpace in numbers">
+        <span class="rule" data-rule></span>
+        <article class="fact" data-reveal>
+          <p class="fact-line">{brand.publishing.line}</p>
+          <p class="fact-num" data-count={brand.publishing.value} data-suffix={brand.publishing.suffix}>{brand.publishing.stat}</p>
+          <p class="fact-label">{brand.publishing.label}</p>
+        </article>
+        <article class="fact" data-reveal>
+          <p class="fact-line">{brand.jams.line}</p>
+          <p class="fact-num" data-count={brand.jams.value} data-suffix={brand.jams.suffix} data-thousands>{brand.jams.stat}</p>
+          <p class="fact-label">{brand.jams.label}</p>
+        </article>
+        <div class="figure" data-reveal>
+          <HairlineFigure name="cartridges" label="A tray of game cartridges; the one under the pointer lifts out." />
+        </div>
+      </section>
+
+      <a class="events" href={brand.events.url} target="_blank" rel="noopener" data-reveal>
+        <span class="rule" data-rule></span>
+        <span class="events-line">{brand.events.line}</span>
+        <span class="events-host">{brand.events.host} <span class="arrow" aria-hidden="true">↗</span></span>
+      </a>
+    </main>
+
+    <footer class="foot" data-reveal>
+      <span class="rule" data-rule></span>
+      <span>© {year} {brand.name}</span>
+      <nav aria-label="Social">
+        {brand.social.map((s) => <a href={s.url} target="_blank" rel="noopener">{s.label}</a>)}
+      </nav>
+      <nav aria-label="Legal">
+        {brand.legal.map((l) => <a href={`${BASE}${l.path}`}>{l.label}</a>)}
+      </nav>
+    </footer>
+  </div>
+</Minimal>
+
+<style is:global>
+  :root {
+    color-scheme: light;
+    --ground: #fafaf7;
+    --ink: #111110;
+    --muted: #8c8c86;
+    --line: #e2e2dc;
+    --pad: clamp(20px, 3.2vw, 48px);
+    --hairline-plate: var(--ground);
+    --hl-read: var(--muted);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--ground); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font: 400 15px/1.5 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; text-decoration: none; }
+  p { margin: 0; }
+</style>
+
+<style>
+  .page {
+    min-height: 100svh;
+    padding: 0 var(--pad);
+    display: flex;
+    flex-direction: column;
+  }
+  .rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--line);
+    transform-origin: left center;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 76px;
+  }
+  .logo img {
+    display: block;
+    height: 28px;
+    width: auto;
+  }
+  .bar-link {
+    font-size: 14px;
+    display: inline-flex;
+    gap: 6px;
+    align-items: baseline;
+  }
+  .arrow {
+    display: inline-block;
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .bar-link:hover .arrow,
+  .events:hover .arrow {
+    transform: translate(3px, -3px);
+  }
+
+  main { flex: 1; }
+
+  .statement {
+    margin: clamp(56px, 12vh, 140px) 0 clamp(72px, 16vh, 180px);
+    font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: clamp(40px, 6.6vw, 112px);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+    max-width: 14em;
+    text-wrap: balance;
+  }
+  .statement .tail { color: var(--muted); }
+
+  .facts {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--pad);
+    padding-top: 28px;
+  }
+  .fact { grid-column: span 4; }
+  .fact-line {
+    font-size: 15px;
+    max-width: 22ch;
+  }
+  .fact-num {
+    margin-top: clamp(40px, 8vh, 96px);
+    font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: clamp(64px, 9vw, 152px);
+    line-height: 0.9;
+    letter-spacing: -0.055em;
+    font-variant-numeric: tabular-nums;
+  }
+  .fact-label {
+    margin-top: 14px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .figure {
+    grid-column: span 4;
+    align-self: end;
+    margin-top: -24px;
+  }
+
+  .events {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    margin-top: clamp(64px, 12vh, 140px);
+    padding: 28px 0 32px;
+    font-family: 'Inter Tight', 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: clamp(24px, 3vw, 44px);
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+  }
+  .events-host {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 0;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color 0.4s;
+  }
+  .events:hover .events-host { color: var(--ink); }
+
+  .foot {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    align-items: center;
+    padding: 22px 0 28px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .foot nav {
+    display: flex;
+    gap: 20px;
+  }
+  .foot nav:last-child { margin-left: auto; }
+  .foot a { transition: color 0.3s; }
+  .foot a:hover { color: var(--ink); }
+
+  @media (max-width: 860px) {
+    .fact { grid-column: span 6; }
+    .figure {
+      grid-column: 1 / -1;
+      margin-top: 24px;
+      max-width: 440px;
+      justify-self: center;
+      width: 100%;
+    }
+  }
+  @media (max-width: 560px) {
+    .bar-link { font-size: 13px; }
+    .fact { grid-column: 1 / -1; }
+    .fact + .fact { margin-top: 48px; }
+    .fact-num { margin-top: 20px; }
+    .events { flex-direction: column; gap: 12px; }
+    .foot nav:last-child { margin-left: 0; }
+  }
+</style>
+
+<script>
+  import { countUp, formatThousands, gsap, onMotion, SplitText } from '../lib/motion';
+
+  onMotion(() => {
+    const tl = gsap.timeline({ defaults: { ease: 'hairline' } });
+    const split = SplitText.create('.statement', { type: 'lines', mask: 'lines', linesClass: 'line' });
+
+    tl.from('.bar', { autoAlpha: 0, y: -8, duration: 0.8 })
+      // The masks clip descenders at this line height, so the split goes once the lines land.
+      .from(split.lines, { yPercent: 110, duration: 1.2, stagger: 0.08, onComplete: () => split.revert() }, 0.1);
+
+    gsap.utils.toArray<HTMLElement>('[data-rule]').forEach((rule) => {
+      gsap.from(rule, {
+        scaleX: 0,
+        duration: 1.4,
+        ease: 'hairline',
+        scrollTrigger: { trigger: rule, start: 'top bottom', once: true },
+      });
+    });
+
+    gsap.utils.toArray<HTMLElement>('.fact, .figure, .events, .foot').forEach((el, i) => {
+      gsap.from(el, {
+        autoAlpha: 0,
+        y: 24,
+        duration: 1,
+        delay: el.classList.contains('fact') || el.classList.contains('figure') ? (i % 3) * 0.08 : 0,
+        ease: 'hairline',
+        scrollTrigger: { trigger: el, start: 'top bottom', once: true },
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((el, i) => {
+      const to = Number(el.dataset.count);
+      const suffix = el.dataset.suffix ?? '';
+      const fmt = 'thousands' in el.dataset ? formatThousands : (n: number) => String(Math.round(n));
+      countUp(el, to, (n) => fmt(n) + suffix, 0.15 + i * 0.1);
+    });
+
+    return () => split.revert();
+  });
+</script>

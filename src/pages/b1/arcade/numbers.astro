@@ -1,0 +1,148 @@
+---
+// B1 arcade, numbers: the three figures set big in a row, each with a line of
+// context, then the way in as one wide band.
+import '../../../styles/soft.css';
+import ArcadeHero from '../../../components/ArcadeHero.astro';
+import PickerBridge from '../../../components/PickerBridge.astro';
+import SoftChrome from '../../../components/SoftChrome.astro';
+import Minimal from '../../../layouts/Minimal.astro';
+import { brand, studioDescription, title } from '../../../data/brand';
+
+const stats = [
+  { label: 'Players', num: brand.publishing.stat, count: brand.publishing.value, suffix: brand.publishing.suffix, note: `${brand.publishing.line}, across all platforms.` },
+  { label: 'Games submitted', num: brand.jams.stat, count: brand.jams.value, suffix: brand.jams.suffix, note: 'All time, across every jam we have run.' },
+  { label: 'Jamming since', num: String(brand.jams.since), note: "We've been running game jams since the start." },
+];
+---
+
+<Minimal
+  title={title}
+  description={studioDescription}
+  noindex
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&display=swap"
+>
+  <ArcadeHero />
+
+  <main class="wrap">
+    <section class="stats" aria-label="ScoreSpace in numbers">
+      {stats.map((s) => (
+        <article class="stat" data-reveal>
+          <span class="rule" aria-hidden="true"></span>
+          <p class="label">{s.label}</p>
+          <p class="num" data-count={s.count} data-suffix={s.suffix}>{s.num}</p>
+          <p class="note">{s.note}</p>
+        </article>
+      ))}
+    </section>
+
+    <a class="cta" href={brand.events.url} target="_blank" rel="noopener" data-reveal>
+      <span class="cta-kicker">Your turn</span>
+      <span class="cta-line">{brand.events.line}</span>
+      <span class="cta-go" aria-hidden="true"><span class="arrow">↗</span></span>
+    </a>
+  </main>
+
+  <SoftChrome part="foot" />
+  <PickerBridge />
+</Minimal>
+
+<style>
+  .wrap { padding: clamp(24px, 6vh, 64px) var(--pad) 8px; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .stat { position: relative; padding-top: 22px; }
+  .rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--rule);
+    transform-origin: left center;
+  }
+  .label { color: var(--muted); font-size: 14px; font-weight: 400; }
+  .num {
+    margin-top: clamp(24px, 5vh, 56px);
+    font-weight: 300;
+    font-size: clamp(64px, 8vw, 132px);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    color: var(--bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .note { margin-top: 16px; max-width: 26ch; color: var(--muted); }
+
+  .cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 24px;
+    margin-top: clamp(48px, 9vh, 96px);
+    padding: 26px 26px 26px 32px;
+    border-radius: 28px;
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .cta-kicker { grid-column: 1; color: rgba(25, 21, 43, 0.6); font-size: 13px; font-weight: 400; }
+  .cta-line {
+    grid-column: 1;
+    margin-top: 6px;
+    font-weight: 400;
+    font-size: clamp(24px, 3vw, 40px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .cta-go {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--accent-ink);
+    color: var(--accent);
+    font-size: 26px;
+    transition: scale 160ms var(--ease-out);
+  }
+  .cta:active .cta-go { scale: 0.94; }
+  @media (hover: hover) and (pointer: fine) {
+    .cta:hover .arrow { transform: translate(3px, -3px); }
+  }
+
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: 1fr; gap: 36px; }
+    .num { margin-top: 14px; }
+    .cta { padding: 22px; }
+    .cta-go { width: 56px; height: 56px; font-size: 22px; }
+  }
+</style>
+
+<script>
+  import { formatThousands, gsap, onMotion } from '../../../lib/motion';
+
+  onMotion(() => {
+    // The row arrives as it scrolls in: rules draw from the left, then each figure counts up, 80ms apart.
+    const tl = gsap.timeline({ defaults: { ease: 'out' }, scrollTrigger: { trigger: '.stats', start: 'top 85%', once: true } });
+    tl.from('.rule', { scaleX: 0, duration: 1, stagger: 0.08 })
+      .from('.stat > :not(.rule)', { autoAlpha: 0, y: 12, duration: 0.6, stagger: 0.04 }, 0.1);
+    document.querySelectorAll<HTMLElement>('.num[data-count]').forEach((el, i) => {
+      const to = Number(el.dataset.count), suffix = el.dataset.suffix ?? '', s = { v: 0 };
+      tl.call(() => { el.textContent = '0' + suffix; }, undefined, 0)
+        .to(s, { v: to, duration: 1.4, onUpdate: () => { el.textContent = formatThousands(s.v) + suffix; } }, 0.25 + i * 0.08);
+    });
+    gsap.from('.cta', {
+      autoAlpha: 0,
+      y: 16,
+      duration: 0.7,
+      ease: 'out',
+      clearProps: 'transform,translate,rotate,scale',
+      scrollTrigger: { trigger: '.cta', start: 'top bottom', once: true },
+    });
+  });
+</script>

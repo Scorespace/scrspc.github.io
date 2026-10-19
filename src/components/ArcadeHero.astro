@@ -1,0 +1,100 @@
+---
+// The top of the /b1/arcade/ pages: the logo, the way to events, and the studio tagline, with three arcade
+// cabinets beside it taking turns to play breakout, tetris and snake. On narrow
+// screens one cabinet plays all three.
+import HairlineFigure from './HairlineFigure.astro';
+import { brand } from '../data/brand';
+
+const BASE = import.meta.env.BASE_URL;
+---
+
+<header class="top" data-reveal>
+  <a class="logo" href={BASE} aria-label={brand.name}>
+    <img src={`${BASE}${brand.logo}`} alt={brand.name} width="800" height="463" />
+  </a>
+  <a class="pill" href={brand.events.url} target="_blank" rel="noopener">Events on Jamzo <span class="arrow" aria-hidden="true">↗</span></a>
+</header>
+
+<section class="hero">
+  <h1 class="statement" data-reveal>{brand.tagline}</h1>
+  <div class="figure" data-reveal>
+    <HairlineFigure
+      name="arcade-trio"
+      class="wide-only"
+      theme="dark"
+      play={false}
+      readout={false}
+      label="Three arcade cabinets taking turns to play breakout, tetris and snake."
+    />
+    <HairlineFigure
+      name="arcade-solo"
+      class="narrow-only"
+      theme="dark"
+      play={false}
+      readout={false}
+      label="An arcade cabinet that changes game every few seconds: breakout, tetris, snake."
+    />
+  </div>
+</section>
+
+<style>
+  /* Just the logo and the way to events, at either end. */
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    padding: 0 var(--pad);
+  }
+  .logo img { display: block; height: 34px; width: auto; }
+
+  .hero {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 16px;
+    padding: 0 var(--pad);
+  }
+
+  .hero {
+    align-items: center;
+    min-height: min(720px, calc(100svh - 80px));
+    padding-top: clamp(16px, 4vh, 48px);
+    padding-bottom: clamp(16px, 4vh, 48px);
+  }
+  .statement {
+    grid-column: 1 / span 6;
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(36px, 4.4vw, 68px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--bright);
+    text-wrap: balance;
+  }
+  .statement .soft { color: var(--muted); }
+  .figure { grid-column: 7 / span 6; display: grid; gap: 4px; }
+  .figure :global(.narrow-only) { display: none; }
+
+  @media (max-width: 900px) {
+    .hero { min-height: 0; row-gap: 24px; }
+    .statement { grid-column: 1 / -1; text-align: center; }
+    .figure { grid-column: 1 / -1; order: -1; max-width: 680px; width: 100%; justify-self: center; }
+  }
+  @media (max-width: 760px) {
+    .figure :global(.wide-only) { display: none; }
+    .figure :global(.narrow-only) { display: block; max-width: 420px; margin: 0 auto; }
+  }
+</style>
+
+<script>
+  import { gsap, onMotion, SplitText } from '../lib/motion';
+
+  onMotion(() => {
+    const split = SplitText.create('.hero .statement', { type: 'words' });
+    const tl = gsap.timeline({ defaults: { ease: 'out' } });
+    tl.from('.top', { autoAlpha: 0, duration: 0.6 }, 0)
+      .from(split.words, { autoAlpha: 0, y: 14, filter: 'blur(6px)', duration: 0.9, stagger: 0.03 }, 0.1)
+      .from('.hero .figure', { autoAlpha: 0, y: 16, duration: 1.1 }, 0.25);
+    return () => split.revert();
+  });
+</script>

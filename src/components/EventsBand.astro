@@ -1,0 +1,58 @@
+---
+// Events: one lavender band out to Jamzo, where every upcoming event lives.
+import { brand } from '../data/brand';
+---
+
+<section class="events" aria-label="Events">
+  <a class="band" href={brand.events.url} target="_blank" rel="noopener" data-reveal>
+    <span class="kicker">Events</span>
+    <span class="line">{brand.events.line}</span>
+    <span class="go" aria-hidden="true"><span class="arrow">↗</span></span>
+  </a>
+</section>
+
+<style>
+  .events { padding: clamp(40px, 8vh, 88px) var(--pad) 8px; }
+  .band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 24px;
+    padding: 26px 26px 26px 32px;
+    border-radius: 28px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: background-color 200ms ease;
+  }
+  .kicker { grid-column: 1; color: rgba(25, 21, 43, 0.6); font-size: 13px; font-weight: 400; }
+  .line {
+    grid-column: 1;
+    margin-top: 6px;
+    font-weight: 400;
+    font-size: clamp(24px, 3vw, 40px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .go {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--accent-ink);
+    color: var(--accent);
+    font-size: 26px;
+    transition: scale 160ms var(--ease-out);
+  }
+  .band:active .go { scale: 0.94; }
+  @media (hover: hover) and (pointer: fine) {
+    .band:hover { background: #c9baff; }
+    .band:hover .arrow { transform: translate(3px, -3px); }
+  }
+  @media (max-width: 760px) {
+    .band { padding: 22px; }
+    .go { width: 56px; height: 56px; font-size: 22px; }
+  }
+</style>

@@ -1,0 +1,13 @@
+---
+// The picker for B1's format variations.
+import ProtoPicker from '../../components/ProtoPicker.astro';
+
+const variants = [
+  { name: 'Dialogue', path: 'b1/dialogue/' },
+  { name: 'Scoreboard', path: 'b1/scoreboard/' },
+  { name: 'Bento', path: 'b1/bento/' },
+  { name: 'Story', path: 'b1/story/' },
+];
+---
+
+<ProtoPicker title="ScoreSpace · B1 variations" variants={variants} />

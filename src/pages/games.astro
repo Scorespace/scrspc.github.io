@@ -33,6 +33,7 @@ import { games } from '../data/games';
                     {game.platform === 'itch' && 'itch.io'}
                     {game.platform === 'steam' && 'Steam'}
                     {game.platform === 'web' && 'Web'}
+                    {game.platform === 'reddit' && 'Reddit'}
                   </span>
                   <span class="playable-badge">
                     {game.playable === 'browser' && 'Play in Browser'}
@@ -229,6 +230,11 @@ import { games } from '../data/games';
   .platform-steam {
     background-color: rgba(102, 192, 244, 0.15);
     color: #66C0F4;
+  }
+
+  .platform-reddit {
+    background-color: rgba(255, 69, 0, 0.15);
+    color: #FF4500;
   }
 
   .platform-web {

@@ -1,0 +1,257 @@
+---
+// Variation B1: Index, soft. Dusk charcoal, Lexend throughout, rounded rows, the controller.
+import HairlineFigure from '../components/HairlineFigure.astro';
+import Minimal from '../layouts/Minimal.astro';
+import { brand, description, indexRows, title } from '../data/brand';
+
+const BASE = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+---
+
+<Minimal
+  title={title}
+  description={description}
+  noindex
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&display=swap"
+>
+  <div class="frame">
+    <header class="top" data-reveal>
+      <a class="logo" href={BASE} aria-label={brand.name}>
+        <img src={`${BASE}${brand.logo}`} alt={brand.name} width="800" height="463" />
+      </a>
+      <span class="meta">Since {brand.jams.since}</span>
+      <span class="meta wide">Game jams, published games</span>
+      <a class="pill" href={brand.events.url} target="_blank" rel="noopener">Events on Jamzo <span class="arrow" aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="mid">
+      <h1 class="statement" data-reveal>
+        {brand.statementLead} <span class="soft">{brand.statementTail}</span>
+      </h1>
+      <div class="figure" data-reveal>
+        <HairlineFigure name="controller" theme="dark" label="A game controller that tips toward the pointer." />
+      </div>
+    </main>
+
+    <ol class="index">
+      {indexRows.map((r) => (
+        <li class="row" data-reveal>
+          <span class="no">{r.no}</span>
+          <span class="key">{r.key}</span>
+          <span class="val">{r.val}</span>
+          <span class="aux">
+            {r.num && <b data-count={r.num}>{r.num}</b>} {r.aux}
+          </span>
+        </li>
+      ))}
+      <li class="row" data-reveal>
+        <a class="row-link" href={brand.events.url} target="_blank" rel="noopener">
+          <span class="no">04</span>
+          <span class="key">Events</span>
+          <span class="val">{brand.events.line}</span>
+          <span class="aux accent">{brand.events.host} <span class="arrow" aria-hidden="true">↗</span></span>
+        </a>
+      </li>
+    </ol>
+
+    <footer class="foot" data-reveal>
+      <span>© {year} {brand.name}</span>
+      <nav aria-label="Social">
+        {brand.social.map((s) => <a href={s.url} target="_blank" rel="noopener">{s.label}</a>)}
+      </nav>
+      <nav aria-label="Legal">
+        {brand.legal.map((l) => <a href={`${BASE}${l.path}`}>{l.label}</a>)}
+      </nav>
+    </footer>
+  </div>
+</Minimal>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    --ground: #1c1b22;
+    --ink: #e4e2ec;
+    --bright: #f7f6fb;
+    --muted: #9a97a8;
+    --dim: #6c6979;
+    --rule: rgba(255, 255, 255, 0.07);
+    --wash: rgba(255, 255, 255, 0.045);
+    --accent: #bba9ff;
+    --pad: clamp(18px, 3vw, 44px);
+    --hairline-plate: var(--ground);
+    --hairline-hi: #f4f2fb;
+    --hairline-edge: #a29eb6;
+    --hairline-mid: #5d5a6c;
+    --hairline-lo: #3b3946;
+    --hl-read: var(--dim);
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--ground); }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font: 300 15px/1.55 'Lexend', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--accent); color: var(--ground); }
+</style>
+
+<style>
+  .frame {
+    min-height: 100svh;
+    padding: 0 var(--pad);
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+  }
+  .top,
+  .mid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 16px;
+  }
+
+  .top {
+    align-items: center;
+    height: 80px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .logo { grid-column: span 3; }
+  .logo img { display: block; height: 26px; width: auto; }
+  .meta { grid-column: span 2; white-space: nowrap; }
+  .meta.wide { grid-column: span 4; }
+  .pill {
+    grid-column: span 3;
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: var(--wash);
+    color: var(--ink);
+    font-weight: 400;
+    transition: background-color 0.5s cubic-bezier(0.32, 0.72, 0, 1), color 0.5s;
+  }
+  .pill:hover { background: rgba(255, 255, 255, 0.09); color: var(--bright); }
+  .arrow {
+    display: inline-block;
+    transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  a:hover .arrow { transform: translate(2px, -2px); }
+
+  .mid {
+    align-items: center;
+    padding: clamp(24px, 6vh, 72px) 0;
+  }
+  .statement {
+    grid-column: 1 / span 6;
+    margin: 0;
+    font-weight: 300;
+    font-size: clamp(30px, 3.3vw, 50px);
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+    color: var(--bright);
+    text-wrap: balance;
+  }
+  .statement .soft { color: var(--muted); }
+  .figure { grid-column: 8 / span 5; }
+
+  .index {
+    list-style: none;
+    margin: 0 calc(var(--pad) * -0.5);
+    padding: 0;
+  }
+  .row + .row { margin-top: 4px; }
+  .row,
+  .row-link {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: 16px;
+    align-items: baseline;
+  }
+  .row {
+    padding: 18px calc(var(--pad) * 0.5);
+    border-radius: 18px;
+    transition: background-color 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .row:hover { background: var(--wash); }
+  .row:has(.row-link) { display: block; }
+  .row-link { grid-column: 1 / -1; }
+  .no { grid-column: span 1; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .key { grid-column: span 2; color: var(--muted); }
+  .val { grid-column: span 5; color: var(--ink); }
+  .aux { grid-column: span 4; justify-self: end; text-align: right; color: var(--muted); }
+  .aux b { font-weight: 400; color: var(--bright); font-variant-numeric: tabular-nums; }
+  .aux.accent { color: var(--accent); }
+
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    padding: 28px 0 30px;
+    font-size: 13px;
+    color: var(--dim);
+  }
+  .foot nav { display: flex; gap: 20px; }
+  .foot nav:last-child { margin-left: auto; }
+  .foot a { transition: color 0.4s; }
+  .foot a:hover { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .meta.wide { display: none; }
+    .logo { grid-column: span 6; }
+    .meta { grid-column: span 3; }
+    .pill { grid-column: span 3; }
+    .statement { grid-column: 1 / -1; }
+    .figure { grid-column: 2 / span 10; margin-top: 16px; }
+    .no { grid-column: span 2; }
+    .key { grid-column: span 4; }
+    .val { grid-column: 7 / -1; }
+    .aux { grid-column: 7 / -1; justify-self: start; text-align: left; margin-top: 4px; }
+  }
+  @media (max-width: 560px) {
+    .meta { display: none; }
+    .logo { grid-column: span 6; }
+    .pill { grid-column: span 6; height: 34px; padding: 0 14px; font-size: 13px; }
+    .figure { grid-column: 1 / -1; }
+    .val, .aux { grid-column: 1 / -1; }
+    .val { margin-top: 6px; }
+    .foot nav:last-child { margin-left: 0; }
+  }
+</style>
+
+<script>
+  import { gsap, onMotion, SplitText } from '../lib/motion';
+
+  onMotion(() => {
+    const split = SplitText.create('.statement', { type: 'words' });
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+
+    tl.from('.top', { autoAlpha: 0, duration: 1.2 }, 0)
+      .from(split.words, { autoAlpha: 0, y: 14, filter: 'blur(8px)', duration: 1.4, stagger: 0.035 }, 0.15)
+      .from('.figure', { autoAlpha: 0, scale: 0.96, filter: 'blur(10px)', duration: 1.6 }, 0.4)
+      .from('.row', { autoAlpha: 0, y: 16, duration: 1.2, stagger: 0.09 }, 0.8)
+      .from('.foot', { autoAlpha: 0, duration: 1 }, 1.3);
+
+    // The numbers count up softly as their rows arrive.
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((el, i) => {
+      const text = el.dataset.count!;
+      const to = Number(text.replace(/[^0-9]/g, ''));
+      const suffix = text.replace(/[0-9,]/g, '');
+      const state = { v: 0 };
+      el.textContent = '0' + suffix;
+      tl.to(state, {
+        v: to,
+        duration: 1.8,
+        ease: 'power3.out',
+        onUpdate: () => { el.textContent = Math.round(state.v).toLocaleString('en-US') + suffix; },
+      }, 0.95 + i * 0.1);
+    });
+
+    return () => split.revert();
+  });
+</script>

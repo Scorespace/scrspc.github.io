@@ -1,0 +1,13 @@
+---
+// The picker for the arcade page: the story under the cabinets, and three ways of showing the numbers.
+import ProtoPicker from '../../../components/ProtoPicker.astro';
+
+const variants = [
+  { name: 'Story', path: 'b1/arcade/story/' },
+  { name: 'Numbers', path: 'b1/arcade/numbers/' },
+  { name: 'Dots', path: 'b1/arcade/dots/' },
+  { name: 'Sentence', path: 'b1/arcade/sentence/' },
+];
+---
+
+<ProtoPicker title="ScoreSpace · arcade variations" variants={variants} />

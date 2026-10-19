@@ -1,0 +1,321 @@
+---
+// B1, format: Dialogue. The page is a conversation: you ask, ScoreSpace answers,
+// typing first. Beside it, a phone playing a stacker.
+import '../../styles/soft.css';
+import HairlineFigure from '../../components/HairlineFigure.astro';
+import PickerBridge from '../../components/PickerBridge.astro';
+import SoftChrome from '../../components/SoftChrome.astro';
+import Minimal from '../../layouts/Minimal.astro';
+import { brand, description, title } from '../../data/brand';
+
+const BASE = import.meta.env.BASE_URL;
+// Each turn: who speaks, what kind of bubble, and which beat of the reveal it belongs to.
+const turns = [
+  { who: 'me', beat: 0, text: "hey! what's ScoreSpace?" },
+  { who: 'ss', beat: 0, text: 'We source early game concepts in volume, through game jam events and unique developer submissions.', lead: true },
+  { who: 'me', beat: 1, text: 'and then what happens to the games?' },
+  { who: 'ss', beat: 1, text: brand.publishing.line + '.' },
+  { who: 'ss', beat: 1, kind: 'stat', count: brand.publishing.value, suffix: brand.publishing.suffix, stat: brand.publishing.stat, label: brand.publishing.label },
+  { who: 'me', beat: 2, text: 'how long have you been running jams?' },
+  { who: 'ss', beat: 2, text: `Since ${brand.jams.since}.` },
+  { who: 'ss', beat: 2, kind: 'stat', count: brand.jams.value, suffix: brand.jams.suffix, stat: brand.jams.stat, label: brand.jams.label },
+  { who: 'me', beat: 3, text: "where's the next one?" },
+  { who: 'ss', beat: 3, kind: 'link' },
+];
+---
+
+<Minimal
+  title={title}
+  description={description}
+  noindex
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&display=swap"
+>
+  <div class="page">
+    <header class="chat-top" data-reveal>
+      <a class="who" href={BASE} aria-label={brand.name}>
+        <span class="avatar"><img src={`${BASE}${brand.logo}`} alt="" width="800" height="463" /></span>
+        <span class="who-text">
+          <span class="who-name">{brand.name}</span>
+          <span class="who-sub">Game jams → published games</span>
+        </span>
+      </a>
+      <a class="pill" href={brand.events.url} target="_blank" rel="noopener">Events on Jamzo <span class="arrow" aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="layout">
+      <section class="thread" aria-label="Conversation with ScoreSpace">
+        <h1 class="sr-only">{brand.statement}</h1>
+        <p class="stamp" data-reveal>Today 9:41</p>
+        <ol class="msgs">
+          {turns.map((t) => (
+            <>
+              {t.who === 'ss' && <li class="typing" aria-hidden="true" data-beat={t.beat}><i></i><i></i><i></i></li>}
+              <li class:list={['msg', t.who, t.kind, { lead: t.lead }]} data-reveal data-beat={t.beat} data-typed={t.who === 'ss' ? '' : undefined}>
+                {t.kind === 'stat' ? (
+                  <>
+                    <b data-count={t.count} data-suffix={t.suffix}>{t.stat}</b>
+                    <span>{t.label}</span>
+                  </>
+                ) : t.kind === 'link' ? (
+                  <a href={brand.events.url} target="_blank" rel="noopener">
+                    <span class="link-title">{brand.events.line}</span>
+                    <span class="link-host">{brand.events.host} <span class="arrow" aria-hidden="true">↗</span></span>
+                  </a>
+                ) : t.text}
+              </li>
+            </>
+          ))}
+        </ol>
+        <a class="composer" href={brand.events.url} target="_blank" rel="noopener" data-reveal>
+          <span>Ask about the next jam…</span>
+          <span class="send" aria-hidden="true">↑</span>
+        </a>
+      </section>
+
+      <aside class="device" data-reveal>
+        <HairlineFigure name="phone" theme="dark" intensity={0.45} label="A phone playing a stacker game." />
+        <p class="device-note">Now playing: Stack. Point at the glass to stop the bar.</p>
+      </aside>
+    </main>
+
+    <SoftChrome part="foot" />
+  </div>
+  <PickerBridge />
+</Minimal>
+
+<style>
+  .page {
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .chat-top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 76px;
+    padding: 0 var(--pad);
+    background: rgba(28, 27, 34, 0.82);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .who { display: flex; align-items: center; gap: 12px; }
+  .avatar {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--raised);
+    box-shadow: inset 0 0 0 1px var(--edge);
+  }
+  .avatar img { width: 30px; height: auto; display: block; }
+  .who-text { display: grid; line-height: 1.25; }
+  .who-name { color: var(--bright); font-weight: 500; font-size: 15px; }
+  .who-sub { color: var(--dim); font-size: 12.5px; }
+
+  .layout {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px var(--pad) 48px;
+    display: grid;
+    grid-template-columns: minmax(0, 580px) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .stamp {
+    text-align: center;
+    color: var(--dim);
+    font-size: 12px;
+    margin: 12px 0 18px;
+  }
+  .msgs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .msg {
+    max-width: 82%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 16px;
+    line-height: 1.42;
+  }
+  .msg.me {
+    align-self: flex-end;
+    margin-top: 14px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 400;
+    border-bottom-right-radius: 6px;
+  }
+  .msg.ss {
+    align-self: flex-start;
+    background: var(--raised);
+    color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--edge);
+    border-bottom-left-radius: 6px;
+  }
+  .msg.lead {
+    font-size: clamp(19px, 2vw, 23px);
+    line-height: 1.32;
+    color: var(--bright);
+    padding: 14px 18px;
+  }
+  .msg.stat { padding: 14px 18px 15px; display: grid; gap: 2px; }
+  .msg.stat b {
+    font-weight: 300;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .msg.stat span { color: var(--muted); font-size: 14px; }
+  .msg.link { padding: 0; overflow: hidden; }
+  .msg.link a {
+    display: grid;
+    gap: 4px;
+    padding: 14px 18px;
+    transition: background-color 200ms ease, scale 160ms var(--ease-out);
+  }
+  .msg.link a:active { scale: 0.97; }
+  .link-title { color: var(--bright); font-weight: 400; }
+  .link-host { color: var(--accent); font-size: 13.5px; }
+
+  .typing {
+    display: none;
+    align-self: flex-start;
+    gap: 4px;
+    padding: 13px 15px;
+    border-radius: 20px;
+    border-bottom-left-radius: 6px;
+    background: var(--raised);
+    box-shadow: inset 0 0 0 1px var(--edge);
+  }
+  .typing i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .typing i { animation: bob 1s var(--ease-in-out) infinite; }
+    .typing i:nth-child(2) { animation-delay: 0.12s; }
+    .typing i:nth-child(3) { animation-delay: 0.24s; }
+  }
+  @keyframes bob {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  .composer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 28px;
+    height: 48px;
+    padding: 0 6px 0 18px;
+    border-radius: 999px;
+    color: var(--dim);
+    box-shadow: inset 0 0 0 1px var(--wash-2);
+    transition: box-shadow 200ms ease, color 200ms ease, scale 160ms var(--ease-out);
+  }
+  .composer:active { scale: 0.98; }
+  .send {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 500;
+    transition: transform 200ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .msg.link a:hover { background: var(--wash); }
+    .composer:hover { color: var(--muted); box-shadow: inset 0 0 0 1px rgba(187, 169, 255, 0.45); }
+    .composer:hover .send { transform: translateY(-2px); }
+  }
+
+  .device {
+    position: sticky;
+    top: 108px;
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+  }
+  .device :global(.hl) { max-width: 520px; }
+  .device-note { color: var(--dim); font-size: 13px; text-align: center; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 8px; }
+    .device { position: static; order: -1; }
+    .device :global(.hl) { max-width: 340px; }
+    .who-sub { display: none; }
+  }
+</style>
+
+<script>
+  import { gsap, onMotionOr, ScrollTrigger } from '../../lib/motion';
+
+  const count = (b: HTMLElement) => {
+    const to = Number(b.dataset.count), suffix = b.dataset.suffix ?? '', s = { v: 0 };
+    b.textContent = '0' + suffix;
+    gsap.to(s, {
+      v: to,
+      duration: 1.2,
+      ease: 'out',
+      onUpdate: () => { b.textContent = Math.round(s.v).toLocaleString('en-US') + suffix; },
+    });
+  };
+
+  onMotionOr(
+    () => {
+      gsap.from(['.chat-top', '.stamp', '.device'], { autoAlpha: 0, duration: 0.6, ease: 'out', stagger: 0.08 });
+
+      // One timeline per beat of the conversation. A beat plays when it scrolls into view,
+      // but never over the one before it: they queue, the way replies do.
+      let queue: Promise<unknown> = Promise.resolve(gsap.delayedCall(0.5, () => {}));
+      const beats = [...new Set([...document.querySelectorAll<HTMLElement>('.msg')].map((m) => m.dataset.beat))];
+      beats.forEach((beat, i) => {
+        const tl = gsap.timeline({ paused: true, defaults: { ease: 'out' } });
+        document.querySelectorAll<HTMLElement>(`.msg[data-beat="${beat}"]`).forEach((msg) => {
+          const me = msg.classList.contains('me');
+          const from = { autoAlpha: 0, y: 8, scale: 0.96, transformOrigin: me ? '100% 100%' : '0% 100%', duration: 0.32 };
+          if (msg.hasAttribute('data-typed')) {
+            const typing = msg.previousElementSibling as HTMLElement;
+            tl.set(typing, { display: 'flex' })
+              .from(typing, { autoAlpha: 0, scale: 0.9, transformOrigin: '0% 100%', duration: 0.2 })
+              .set(typing, { display: 'none' }, '+=' + (msg.classList.contains('lead') ? 0.9 : 0.55));
+          }
+          tl.from(msg, from, me ? '+=0.15' : undefined);
+          const b = msg.querySelector<HTMLElement>('[data-count]');
+          if (b) tl.call(() => count(b), undefined, '<');
+        });
+        if (i === beats.length - 1) tl.from('.composer', { autoAlpha: 0, y: 8, duration: 0.4, clearProps: 'transform,translate,rotate,scale' }, '+=0.3');
+        const play = () => { queue = queue.then(() => { tl.play(); return tl; }); };
+        if (i === 0) play();
+        else ScrollTrigger.create({ trigger: `.msg[data-beat="${beat}"]`, start: 'top 92%', once: true, onEnter: play });
+      });
+    },
+    () => {
+      // Less motion: the conversation simply fades in, a beat at a time.
+      gsap.from('.msg', { opacity: 0, duration: 0.4, stagger: 0.06, ease: 'none' });
+    },
+  );
+</script>

@@ -1,0 +1,159 @@
+---
+// B1 arcade, sentence: the numbers told as one sentence, each figure bright in
+// the muted text, counting up in place, with a little more on hover.
+import '../../../styles/soft.css';
+import ArcadeHero from '../../../components/ArcadeHero.astro';
+import PickerBridge from '../../../components/PickerBridge.astro';
+import SoftChrome from '../../../components/SoftChrome.astro';
+import Minimal from '../../../layouts/Minimal.astro';
+import { brand, studioDescription, title } from '../../../data/brand';
+import { jams } from '../../../data/jams';
+import { fetchScoreSpaceJams } from '../../../lib/itch-jams';
+
+const fetched = await fetchScoreSpaceJams();
+const jamCount = (fetched.length ? fetched : jams).filter((j) => new Date(j.date).getUTCFullYear() >= brand.jams.since).length;
+---
+
+<Minimal
+  title={title}
+  description={studioDescription}
+  noindex
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&display=swap"
+>
+  <ArcadeHero />
+
+  <main class="wrap">
+    <section class="say" aria-label="ScoreSpace in numbers">
+      <span class="rule" aria-hidden="true"></span>
+      <p class="sentence" data-reveal>
+        Since <span class="term" tabindex="0" aria-describedby="tip-since"><b>{brand.jams.since}</b><span class="tip" role="tooltip" id="tip-since">{jamCount} jams since then</span></span>,
+        developers have submitted
+        <span class="term" tabindex="0" aria-describedby="tip-games"><b class="count" data-count={brand.jams.value} data-suffix={brand.jams.suffix}><span class="ghost" aria-hidden="true">{brand.jams.stat}</span><span class="live">{brand.jams.stat}</span></b><span class="tip" role="tooltip" id="tip-games">Across every jam, all time</span></span>
+        games to our jams. The games we publish have reached
+        <span class="term" tabindex="0" aria-describedby="tip-players"><b class="count" data-count={brand.publishing.value * 1_000_000}><span class="ghost" aria-hidden="true">{brand.publishing.long}</span><span class="live">{brand.publishing.long}</span></b><span class="tip" role="tooltip" id="tip-players">{brand.publishing.line}</span></span>
+        players across all platforms. Find all of our upcoming events on
+        <span class="nowrap"><a class="jamzo" href={brand.events.url} target="_blank" rel="noopener">Jamzo<span class="arrow" aria-hidden="true">↗</span></a>.</span>
+      </p>
+      <a class="pill solid go" href={brand.events.url} target="_blank" rel="noopener" data-reveal>
+        Upcoming events on Jamzo <span class="arrow" aria-hidden="true">↗</span>
+      </a>
+    </section>
+  </main>
+
+  <SoftChrome part="foot" />
+  <PickerBridge />
+</Minimal>
+
+<style>
+  .wrap { padding: clamp(24px, 6vh, 64px) var(--pad) clamp(24px, 6vh, 64px); }
+  .say { position: relative; padding-top: clamp(32px, 6vh, 64px); }
+  .rule {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--rule);
+    transform-origin: left center;
+  }
+  .sentence {
+    max-width: 22em;
+    font-weight: 300;
+    font-size: clamp(28px, 3.6vw, 56px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .term {
+    position: relative;
+    color: var(--bright);
+    /* A border, not text-decoration: the counting figures are inline grids, which decoration does not reach. */
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+    outline: none;
+    cursor: default;
+  }
+  .term b { font-weight: 300; font-variant-numeric: tabular-nums; }
+  /* A counting figure reserves its final width, so the sentence never reflows as it counts. */
+  .count { display: inline-grid; }
+  .count > span { grid-area: 1 / 1; text-align: right; }
+  .count .ghost { visibility: hidden; }
+
+  /* Tooltips: above their figure, growing from it; the first waits, the next ones open at once (see script). */
+  .tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 10px);
+    z-index: 2;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--raised);
+    box-shadow: inset 0 0 0 1px var(--wash-2), 0 8px 24px rgba(0, 0, 0, 0.3);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.3;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 4px) scale(0.97);
+    transform-origin: 50% 100%;
+    transition: opacity 125ms var(--ease-out), transform 125ms var(--ease-out);
+  }
+  .term[data-open] .tip,
+  .term:focus-visible .tip { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  .sentence[data-instant] .tip { transition-duration: 0ms; }
+
+  .nowrap { white-space: nowrap; }
+  .jamzo {
+    color: var(--accent);
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 200ms var(--ease-out);
+  }
+  .jamzo .arrow { font-size: 0.6em; vertical-align: 0.5em; margin-left: 0.08em; }
+  @media (hover: hover) and (pointer: fine) {
+    .jamzo:hover { background-size: 100% 1px; }
+  }
+  .go { margin-top: clamp(28px, 5vh, 48px); height: 46px; padding: 0 22px; font-size: 15px; }
+</style>
+
+<script>
+  import { formatThousands, gsap, onMotionOr } from '../../../lib/motion';
+
+  // Tooltips: wait 400ms before the first, then open the next ones at once while the reader is browsing.
+  const sentence = document.querySelector<HTMLElement>('.sentence')!;
+  let wait = 0, warm = 0;
+  document.querySelectorAll<HTMLElement>('.term').forEach((term) => {
+    term.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(wait);
+      const open = () => term.setAttribute('data-open', '');
+      if (Date.now() < warm) { sentence.setAttribute('data-instant', ''); open(); }
+      else { sentence.removeAttribute('data-instant'); wait = window.setTimeout(open, 400); }
+    });
+    term.addEventListener('pointerleave', () => {
+      clearTimeout(wait);
+      if (term.hasAttribute('data-open')) warm = Date.now() + 400;
+      term.removeAttribute('data-open');
+    });
+  });
+
+  onMotionOr(
+    () => {
+      const tl = gsap.timeline({ defaults: { ease: 'out' }, scrollTrigger: { trigger: '.say', start: 'top 85%', once: true } });
+      tl.from('.rule', { scaleX: 0, duration: 1 })
+        .from('.sentence', { autoAlpha: 0, y: 16, filter: 'blur(6px)', duration: 0.9 }, 0.1)
+        .from('.go', { autoAlpha: 0, y: 10, duration: 0.5, clearProps: 'transform,translate,rotate,scale' }, 0.6);
+      document.querySelectorAll<HTMLElement>('.count').forEach((b, i) => {
+        const live = b.querySelector<HTMLElement>('.live')!, to = Number(b.dataset.count), suffix = b.dataset.suffix ?? '', s = { v: 0 };
+        tl.call(() => { live.textContent = '0' + suffix; }, undefined, 0)
+          .to(s, { v: to, duration: 1.8, onUpdate: () => { live.textContent = formatThousands(s.v) + suffix; } }, 0.35 + i * 0.15);
+      });
+    },
+    () => {
+      gsap.from('.sentence', { opacity: 0, duration: 0.5, ease: 'none' });
+    },
+  );
+</script>

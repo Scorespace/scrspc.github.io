@@ -1,0 +1,227 @@
+---
+// B1, format: Bento. Everything is a soft tile on one grid: the sentence, the
+// numbers, the way in, and two things to play with, a television running snake
+// and a controller.
+import '../../styles/soft.css';
+import HairlineFigure from '../../components/HairlineFigure.astro';
+import PickerBridge from '../../components/PickerBridge.astro';
+import SoftChrome from '../../components/SoftChrome.astro';
+import Minimal from '../../layouts/Minimal.astro';
+import { brand, description, title } from '../../data/brand';
+---
+
+<Minimal
+  title={title}
+  description={description}
+  noindex
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500&display=swap"
+>
+  <SoftChrome part="top" />
+
+  <main class="grid">
+    <section class="tile hero" data-tile data-reveal>
+      <p class="kicker">What we do</p>
+      <h1 class="statement">{brand.statementLead} <span class="soft">{brand.statementTail}</span></h1>
+    </section>
+
+    <section class="tile tv" data-tile data-reveal>
+      <p class="kicker">Now playing <span class="live" aria-hidden="true"></span> Snake</p>
+      <HairlineFigure name="crt-snake" theme="dark" label="A television playing snake; point at the screen to drop the pellet." />
+      <p class="hint">Point at the screen to drop a pellet.</p>
+    </section>
+
+    <section class="tile stat" data-tile data-reveal>
+      <p class="kicker">{brand.publishing.line}</p>
+      <p class="num" data-count={brand.publishing.value} data-suffix={brand.publishing.suffix}>{brand.publishing.stat}</p>
+      <p class="sub">{brand.publishing.label}</p>
+    </section>
+
+    <section class="tile stat" data-tile data-reveal>
+      <p class="kicker">{brand.jams.line}</p>
+      <p class="num" data-count={brand.jams.value} data-suffix={brand.jams.suffix} data-thousands>{brand.jams.stat}</p>
+      <p class="sub">{brand.jams.label}</p>
+    </section>
+
+    <section class="tile pad" data-tile data-reveal>
+      <p class="kicker">Pick it up</p>
+      <HairlineFigure name="controller" theme="dark" readout={false} label="A game controller that tips toward the pointer." />
+    </section>
+
+    <a class="tile cta" href={brand.events.url} target="_blank" rel="noopener" data-tile data-reveal>
+      <span class="kicker">Upcoming events</span>
+      <span class="cta-line">{brand.events.line}</span>
+      <span class="cta-go" aria-hidden="true"><span class="arrow">↗</span></span>
+    </a>
+  </main>
+
+  <SoftChrome part="foot" />
+  <PickerBridge />
+</Minimal>
+
+<style>
+  .grid {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 4px var(--pad) 8px;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: minmax(150px, auto);
+    gap: 14px;
+  }
+  .tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    padding: 24px 26px;
+    background: var(--wash);
+    box-shadow: inset 0 0 0 1px var(--edge);
+    isolation: isolate;
+  }
+  /* A soft light that follows the pointer across a tile: set per tile, so nothing else recalculates. */
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(187, 169, 255, 0.09), transparent 60%);
+    transition: opacity 200ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tile:hover::before { opacity: 1; }
+  }
+
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .live {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(187, 169, 255, 0.15);
+  }
+
+  .hero { grid-column: 1 / span 7; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; padding: 30px 32px; }
+  .statement {
+    margin: 0;
+    font-weight: 300;
+    font-size: clamp(30px, 3.6vw, 54px);
+    line-height: 1.14;
+    letter-spacing: -0.025em;
+    color: var(--bright);
+    text-wrap: balance;
+  }
+  .statement .soft { color: var(--muted); }
+
+  .tv { grid-column: 8 / span 5; grid-row: span 2; display: flex; flex-direction: column; }
+  .tv :global(.hl) { margin: auto 0; }
+  .hint { color: var(--dim); font-size: 13px; }
+
+  .stat { grid-column: span 4; display: flex; flex-direction: column; }
+  .num {
+    margin-top: auto;
+    padding-top: 28px;
+    font-weight: 300;
+    font-size: clamp(48px, 5.4vw, 80px);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .sub { margin-top: 8px; color: var(--muted); }
+
+  .pad { grid-column: span 4; padding-bottom: 8px; }
+  .pad :global(.hl) { margin-top: -8%; }
+
+  .cta {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    align-items: end;
+    column-gap: 24px;
+    min-height: 150px;
+    padding: 26px 26px 26px 32px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: none;
+  }
+  .cta .kicker { color: rgba(25, 21, 43, 0.6); grid-column: 1; }
+  .cta-line {
+    grid-column: 1;
+    font-weight: 400;
+    font-size: clamp(24px, 3vw, 40px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .cta-go {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--accent-ink);
+    color: var(--accent);
+    font-size: 26px;
+  }
+  .cta::before { background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.25), transparent 60%); }
+  /* Press feedback lives on the button, not the tile, so it never fights the tile's entrance. */
+  .cta-go { transition: transform 160ms var(--ease-out); }
+  .cta:active .cta-go { transform: scale(0.94); }
+  @media (hover: hover) and (pointer: fine) {
+    .cta:hover .arrow { transform: translate(3px, -3px); }
+  }
+
+  @media (max-width: 960px) {
+    .hero, .tv { grid-column: 1 / -1; grid-row: auto; }
+    .tv :global(.hl) { max-width: 460px; align-self: center; width: 100%; }
+    .stat { grid-column: span 6; }
+    .pad { grid-column: 1 / -1; }
+    .pad :global(.hl) { max-width: 420px; margin: -6% auto 0; }
+  }
+  @media (max-width: 560px) {
+    .stat { grid-column: 1 / -1; }
+    .tile { border-radius: 24px; padding: 20px; }
+    .hero { padding: 22px; }
+    .cta-go { width: 56px; height: 56px; font-size: 22px; }
+  }
+</style>
+
+<script>
+  import { formatThousands, gsap, onMotionOr } from '../../lib/motion';
+
+  // The light under the pointer, per tile.
+  document.querySelectorAll<HTMLElement>('[data-tile]').forEach((tile) => {
+    tile.addEventListener('pointermove', (e) => {
+      const r = tile.getBoundingClientRect();
+      tile.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      tile.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
+
+  onMotionOr(
+    () => {
+      gsap.from('.soft-top', { autoAlpha: 0, duration: 0.5, ease: 'out' });
+      // Tiles settle in reading order, 60ms apart, from just below their place and a touch smaller.
+      gsap.from('[data-tile]', { autoAlpha: 0, y: 14, scale: 0.98, duration: 0.7, ease: 'out', stagger: 0.06, delay: 0.05, clearProps: 'transform,translate,rotate,scale' });
+      document.querySelectorAll<HTMLElement>('[data-count]').forEach((el, i) => {
+        const to = Number(el.dataset.count), suffix = el.dataset.suffix ?? '', s = { v: 0 };
+        const fmt = 'thousands' in el.dataset ? formatThousands : (n: number) => String(Math.round(n));
+        el.textContent = fmt(0) + suffix;
+        gsap.to(s, { v: to, duration: 1.4, ease: 'out', delay: 0.35 + i * 0.1, onUpdate: () => { el.textContent = fmt(s.v) + suffix; } });
+      });
+    },
+    () => {
+      gsap.from('[data-tile]', { opacity: 0, duration: 0.4, stagger: 0.04, ease: 'none' });
+    },
+  );
+</script>

@@ -1,0 +1,33 @@
+---
+// Header or footer for the /b1/ format variations. `part` picks which.
+import { brand } from '../data/brand';
+
+interface Props {
+  part: 'top' | 'foot';
+}
+
+const { part } = Astro.props;
+const BASE = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
+---
+
+{part === 'top' ? (
+  <header class="soft-top" data-reveal>
+    <a class="soft-logo" href={BASE} aria-label={brand.name}>
+      <img src={`${BASE}${brand.logo}`} alt={brand.name} width="800" height="463" />
+    </a>
+    <a class="pill" href={brand.events.url} target="_blank" rel="noopener">
+      Events on Jamzo <span class="arrow" aria-hidden="true">↗</span>
+    </a>
+  </header>
+) : (
+  <footer class="soft-foot" data-reveal>
+    <span>{`© ${year} ${brand.name}`}</span>
+    <nav aria-label="Social">
+      {brand.social.map((s) => <a href={s.url} target="_blank" rel="noopener">{s.label}</a>)}
+    </nav>
+    <nav aria-label="Legal">
+      {brand.legal.map((l) => <a href={`${BASE}${l.path}`}>{l.label}</a>)}
+    </nav>
+  </footer>
+)}

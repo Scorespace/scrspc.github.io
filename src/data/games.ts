@@ -3,9 +3,11 @@ export interface Game {
   description: string;
   url: string;
   playable: "browser" | "download" | "both";
-  platform: "discord" | "itch" | "steam" | "web";
+  platform: "discord" | "itch" | "steam" | "web" | "reddit";
   tags?: string[];
   thumbnail?: string;
+  /** Shown in the Games list on the arcade pages. */
+  showcase?: boolean;
 }
 
 export const games: Game[] = [
@@ -25,6 +27,23 @@ export const games: Game[] = [
     playable: "browser",
     platform: "discord",
     tags: ["cards", "multiplayer"],
-    thumbnail: "/games/blackjack.png"
+    thumbnail: "/games/blackjack.png",
+    showcase: true
+  },
+  {
+    name: "Word Chain",
+    description: "Play it right in the Reddit feed, in its community r/wordchain.",
+    url: "https://www.reddit.com/r/wordchain/",
+    playable: "browser",
+    platform: "reddit",
+    showcase: true
+  },
+  {
+    name: "Go Far",
+    description: "Play it right in the Reddit feed, in its community r/gofarGame.",
+    url: "https://www.reddit.com/r/gofarGame/",
+    playable: "browser",
+    platform: "reddit",
+    showcase: true
   }
 ];

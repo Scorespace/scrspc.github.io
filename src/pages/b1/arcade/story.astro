@@ -1,0 +1,268 @@
+---
+// B1 arcade, story: the tagline and the three cabinets, then the story under them.
+// One pinned stage, three chapters you scroll through: creativity, volume,
+// distribution. Beside them a field of game tiles changes shape with each one:
+// one idea standing out, a dune of submissions with a few top picks lit, then
+// those picks fused into one game, linked out to the platforms around it.
+// Then the games, and the way in to events on Jamzo.
+//
+// Where there is no room to pin, or the reader asked for less motion, the
+// chapters are simply sections and the field stays in view beside them (on top,
+// on a phone), changing shape as each chapter arrives.
+import '../../../styles/soft.css';
+import ArcadeHero from '../../../components/ArcadeHero.astro';
+import EventsBand from '../../../components/EventsBand.astro';
+import GamesAccordion from '../../../components/GamesAccordion.astro';
+import HairlineFigure from '../../../components/HairlineFigure.astro';
+import PickerBridge from '../../../components/PickerBridge.astro';
+import SoftChrome from '../../../components/SoftChrome.astro';
+import Minimal from '../../../layouts/Minimal.astro';
+import { brand, pillars, studioDescription, title } from '../../../data/brand';
+---
+
+<Minimal
+  title={title}
+  description={studioDescription}
+  noindex
+  theme="dark"
+  fonts="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&display=swap"
+>
+  <ArcadeHero />
+
+  <main>
+    <section class="story" aria-label="How ScoreSpace works">
+      <div class="stage">
+        <div class="copy">
+          <div class="chapters">
+            <article class="chapter on">
+              <p class="no">01 <span>{pillars[0]}</span></p>
+              <h2 class="big">{brand.belief.lead}</h2>
+              <p class="text wide">{brand.belief.body}</p>
+            </article>
+            <article class="chapter">
+              <p class="no">02 <span>{pillars[1]}</span></p>
+              <p class="num">{brand.jams.stat}</p>
+              <p class="text">{brand.jams.label}. {brand.jams.line}.</p>
+              <p class="aside">We source early game concepts in volume through our game jam events and developer submissions.</p>
+            </article>
+            <article class="chapter">
+              <p class="no">03 <span>{pillars[2]}</span></p>
+              <p class="num">{brand.publishing.stat}</p>
+              <p class="text">{brand.publishing.label}.</p>
+            </article>
+          </div>
+          <nav class="progress" aria-label="Chapters">
+            {pillars.map((c, i) => (
+              <button type="button" class:list={['seg', { on: i === 0 }]} data-seg={i} aria-label={`${String(i + 1).padStart(2, '0')} ${c}`}><i></i></button>
+            ))}
+            <span class="count"><b>01</b> / 03</span>
+          </nav>
+        </div>
+        <div class="figure">
+          <HairlineFigure
+            name="concepts"
+            theme="dark"
+            intensity={0}
+            play={false}
+            readout={false}
+            label="A field of game tiles: one idea standing out, then a dune of submissions with three top picks lit, then the picks fused into one game linked to the platforms around it."
+          />
+        </div>
+      </div>
+    </section>
+
+    <GamesAccordion />
+    <EventsBand />
+  </main>
+
+  <SoftChrome part="foot" />
+  <PickerBridge />
+</Minimal>
+
+<style>
+  .stage {
+    padding: 0 var(--pad);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 16px;
+    align-items: start;
+  }
+  /* The field on the left, so the page alternates under the hero. */
+  .figure { grid-column: 1 / span 6; grid-row: 1; position: sticky; top: 12svh; }
+  .copy { grid-column: 8 / span 5; grid-row: 1; }
+  .figure :global(.hl) { max-width: 620px; margin: 0 auto; }
+
+  .no {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  .no span { color: var(--muted); }
+  .big {
+    margin: 20px 0 0;
+    font-weight: 300;
+    font-size: clamp(30px, 3.1vw, 48px);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    color: var(--bright);
+    text-wrap: balance;
+  }
+  .num {
+    margin-top: 18px;
+    font-weight: 300;
+    font-size: clamp(88px, 10vw, 160px);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    color: var(--bright);
+    font-variant-numeric: tabular-nums;
+  }
+  .text { margin-top: 18px; max-width: 30ch; color: var(--muted); font-size: 18px; }
+  .text.wide { max-width: 44ch; line-height: 1.55; }
+  .aside { margin-top: 14px; max-width: 40ch; color: var(--dim); font-size: 15px; }
+
+  /* Stacked, the default: the chapters run down the right, the field holds still beside them. */
+  .chapter { min-height: 70svh; display: flex; flex-direction: column; justify-content: center; padding: 48px 0; }
+  .progress { display: none; }
+
+  /* Pinned, where there is room and motion is welcome: one stage, chapters taking turns. */
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .stage { height: 100svh; align-items: center; }
+    :global(.js) .figure { position: static; }
+    :global(.js) .chapters { position: relative; height: min(460px, 58svh); }
+    :global(.js) .chapter { position: absolute; inset: 0; min-height: 0; padding: 0; visibility: hidden; }
+    :global(.js) .chapter.on { visibility: visible; }
+    :global(.js) .progress { display: flex; align-items: center; gap: 8px; margin-top: 32px; }
+  }
+  .seg {
+    width: 44px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: grid;
+    align-items: center;
+    transition: scale 160ms var(--ease-out);
+  }
+  .seg:active { scale: 0.94; }
+  .seg i {
+    display: block;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--wash-2);
+    position: relative;
+    overflow: hidden;
+  }
+  .seg i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 300ms var(--ease-out);
+  }
+  .seg.on i::after { transform: scaleX(1); }
+  .count { margin-left: 10px; color: var(--dim); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .count b { color: var(--ink); font-weight: 400; }
+
+  /* On a phone: the field sticks to the top, no taller than a third of the screen, and the chapters pass under it. */
+  @media (max-width: 899px) {
+    .figure {
+      grid-column: 1 / -1;
+      top: 0;
+      z-index: 2;
+      padding: 8px 0 4px;
+      background: var(--ground);
+      box-shadow: 0 12px 16px -8px var(--ground);
+    }
+    .figure :global(.hl) { width: min(100%, calc(34svh * 1.25)); }
+    .copy { grid-column: 1 / -1; grid-row: 2; }
+    .chapter { min-height: 56svh; padding: 32px 0; border-top: 1px solid var(--rule); }
+  }
+</style>
+
+<script>
+  import { gsap, onMotionOr, ScrollTrigger } from '../../../lib/motion';
+
+  const chapters = [...document.querySelectorAll<HTMLElement>('.story .chapter')];
+  const segs = [...document.querySelectorAll<HTMLButtonElement>('.story .seg')];
+  const count = document.querySelector<HTMLElement>('.story .count b')!;
+  const host = document.querySelector<HTMLElement & { hairline?: { set: (i: number) => void } }>('[data-hl-figure="concepts"]');
+  /** The field's shape follows the chapter: 0 creativity, 1 volume, 2 distribution. */
+  const shape = (i: number) => host?.hairline?.set(i / 2);
+
+  const mm = gsap.matchMedia();
+  mm.add(
+    { pinned: '(min-width: 900px) and (prefers-reduced-motion: no-preference)', stacked: '(max-width: 899px), (prefers-reduced-motion: reduce)' },
+    (ctx) => {
+      if (ctx.conditions?.stacked) {
+        // Each chapter takes over the field as it crosses the middle of the screen, in either direction.
+        chapters.forEach((c, i) => ScrollTrigger.create({
+          trigger: c,
+          start: 'top 55%',
+          end: 'bottom 55%',
+          onToggle: (self) => { if (self.isActive) shape(i); },
+        }));
+        return;
+      }
+      let current = 0;
+      gsap.from(['.story .figure', '.story .copy'], {
+        autoAlpha: 0, y: 16, duration: 0.8, ease: 'out', stagger: 0.08,
+        scrollTrigger: { trigger: '.story', start: 'top 75%', once: true },
+      });
+
+      // Exit fast, enter slower: the old chapter blurs away in 220ms, the new one settles in over 500ms.
+      function show(next: number) {
+        if (next === current) return;
+        const out = chapters[current], into = chapters[next], dir = next > current ? 1 : -1;
+        gsap.killTweensOf([out, into, ...into.children]);
+        gsap.to(out, { autoAlpha: 0, y: -10 * dir, filter: 'blur(4px)', duration: 0.22, ease: 'inOut', onComplete: () => { out.classList.remove('on'); } });
+        into.classList.add('on');
+        gsap.fromTo(into, { autoAlpha: 0, y: 14 * dir, filter: 'blur(6px)' }, { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'out', delay: 0.08 });
+        gsap.from(into.children, { y: 10 * dir, duration: 0.5, ease: 'out', stagger: 0.05, delay: 0.08, clearProps: 'transform,translate,rotate,scale' });
+        segs.forEach((s, i) => s.classList.toggle('on', i <= next));
+        count.textContent = String(next + 1).padStart(2, '0');
+        shape(next);
+        current = next;
+      }
+
+      const st = ScrollTrigger.create({
+        trigger: '.story',
+        start: 'top top',
+        end: '+=200%',
+        pin: '.stage',
+        snap: { snapTo: [0, 0.5, 1], duration: { min: 0.2, max: 0.5 }, ease: 'inOut', delay: 0.08 },
+        onUpdate: (self) => show(Math.round(self.progress * 2)),
+      });
+      segs.forEach((s, i) => s.addEventListener('click', () => {
+        window.scrollTo({ top: st.start + (st.end - st.start) * (i / 2), behavior: 'smooth' });
+      }));
+
+      return () => {
+        chapters.forEach((c, i) => { c.classList.toggle('on', i === 0); gsap.set(c, { clearProps: 'all' }); });
+        shape(0);
+      };
+    },
+  );
+
+  onMotionOr(
+    () => {
+      // The games list and the events band rise in as they arrive.
+      gsap.utils.toArray<HTMLElement>('.games [data-reveal], .events [data-reveal]').forEach((el, i) => {
+        gsap.from(el, {
+          autoAlpha: 0, y: 14, duration: 0.6, ease: 'out', delay: (i % 3) * 0.05,
+          clearProps: 'transform,translate,rotate,scale',
+          scrollTrigger: { trigger: el, start: 'top 92%', once: true },
+        });
+      });
+      if (matchMedia('(min-width: 900px)').matches) return;
+      chapters.forEach((c) => gsap.from(c.children, { autoAlpha: 0, y: 14, duration: 0.6, ease: 'out', stagger: 0.05, scrollTrigger: { trigger: c, start: 'top 85%', once: true } }));
+    },
+    () => {},
+  );
+</script>
