@@ -55,6 +55,7 @@ export const brand = {
 // The three ideas the arcade story walks through, in order.
 export const pillars = ['Creativity', 'Volume', 'Distribution'] as const;
 
-export const title = 'ScoreSpace - A game studio powered by game jams';
+// The homepage's title, and so the headline of its link previews: just the name.
+export const title = 'ScoreSpace';
 // The homepage leads with the tagline; the statement follows it in search results.
 export const studioDescription = `${brand.tagline}${/[.!?]$/.test(brand.tagline) ? '' : '.'} ${brand.statement}`;
